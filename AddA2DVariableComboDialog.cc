@@ -389,7 +389,7 @@ void AddA2DVariableComboDialog::dialogSetup(const QString & variable)
    if (variable == "New") return;  // edit mode w/New selected
    if (variable.size() == 0) return;  // happens on a new proj open
 
-    VDBVar* vdbVar = _vardb->get_var(variable.toStdString());
+    VDBVar* vdbVar = _vardb->search_var(variable.toStdString());
     if (vdbVar == NULL) {
         // Should not happen, but check anyway.
         QString msg("Could not find variable:\n");
