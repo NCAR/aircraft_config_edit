@@ -25,6 +25,9 @@
 # building within the nidas source as well as when building against an
 # installed nidas.
 
+import os
+import eol_scons
+
 env = Environment(tools = ['default'])
 
 SConscript("SConscript", exports={"env":env})
