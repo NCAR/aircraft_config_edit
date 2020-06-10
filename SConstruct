@@ -4,7 +4,7 @@
 import os
 import eol_scons
 
-env = Environment(tools = ['default', 'nidas', 'qt4', 'qtgui', 'qtcore', 'qtnetwork', 'jlocal', 'boost_regex', 'logx', 'netcdf'])
+env = Environment(tools = ['default', 'nidas', 'qt4', 'qtgui', 'qtcore', 'qtnetwork', 'jlocal', 'raf', 'boost_regex', 'logx', 'netcdf'])
 
 opts = eol_scons.GlobalVariables('config.py')
 opts.AddVariables(('PREFIX',
@@ -14,10 +14,10 @@ opts.AddVariables(('PREFIX',
 opts.Update(env)
 
 # Check if $JLOCAL/include/raf and $JLOCAL/lib exist.
-if not env.JLocalValid():
-    print("Cannot find $JLOCAL/include/raf or $JLOCAL/lib. "
-          "configedit will not be built")
-    Return()
+#if not env.JLocalValid():
+#    print("Cannot find $JLOCAL/include/raf or $JLOCAL/lib. "
+#          "configedit will not be built")
+#    Return()
 
 # Override CXXFLAGS in order to turn off -Weffc++ for now
 env['CXXFLAGS'] = [ '-Wall','-O2' ]
@@ -25,8 +25,8 @@ env['CXXFLAGS'] = [ '-Wall','-O2' ]
 # Add this (possibly variant) directory to CPPPATH, so header files built
 # by uic will be found.
 env.Append(CPPPATH = ['.'])
-env.Append(LIBS=['raf','VarDB', 'domx'])
-#env.Require(['logx'])
+env.Append(LIBS=['VarDB', 'domx'])
+env.Require(['logx'])
 
 sources = Split("""
     main.cc
@@ -56,6 +56,12 @@ sources = Split("""
 headers = Split("""
     configwindow.h
 """)
+
+headers += env.Uic("""AddSensorComboDialog.ui""")
+headers += env.Uic("""AddDSMComboDialog.ui""")
+headers += env.Uic("""AddA2DVariableComboDialog.ui""")
+headers += env.Uic("""VariableComboDialog.ui""")
+headers += env.Uic("""NewProjectDialog.ui""")
 
 configedit = env.NidasProgram('configedit', sources)
 
