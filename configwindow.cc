@@ -42,12 +42,12 @@ using namespace nidas::util;
 
 
 ConfigWindow::ConfigWindow() :
-   _doc(NULL), _noProjDir(false), 
-   _gvDefault("/Configuration/raf/GV_N677F/default.xml"),
-   _c130Default("/Configuration/raf/C130_N130AR/default.xml"),
-   _a2dCalDir("/Configuration/raf/cal_files/A2D/"),
-    _engCalDirRoot("/Configuration/raf/cal_files/Engineering/"), 
-   _pmsSpecsFile("/Configuration/raf/PMSspecs"), 
+   _doc(NULL), _noProjDir(false),
+   _gvDefault("/Configuration/GV_N677F/default.xml"),
+   _c130Default("/Configuration/C130_N130AR/default.xml"),
+   _a2dCalDir("/Configuration/cal_files/A2D/"),
+    _engCalDirRoot("/Configuration/cal_files/Engineering/"),
+   _pmsSpecsFile("/Configuration/PMSspecs"),
    _filename(""), _fileOpen(false)
 {
 try {
@@ -523,7 +523,7 @@ void ConfigWindow::openFile()
         catch (nidas::util::InvalidParameterException &e) {
             cerr<<"caught Exception InvalidParam: " << e.toString() << "\n";
             _errorMessage->setText(QString::fromStdString
-                     ("Caught nidas InvalidParameterException: " 
+                     ("Caught nidas InvalidParameterException: "
                       + e.toString()));
             _errorMessage->exec();
             return;
@@ -973,7 +973,7 @@ void ConfigWindow::changeToIndex(const QModelIndex & index)
   XXX
   ask model: what are you
   (dis)able menu/toolbars
-  
+
   NidasItem *item = model->data(index)
   qt::install(item->menus());
   */

@@ -88,12 +88,12 @@ void NewProjectDialog::accept()
       msgBox.setText("The Project Directory:"+fullProjDir+" already exists.");
       msgBox.exec();
       return;
-    } 
+    }
 
     // Create and execute the init_project command
-    char cmd[1024];  
+    char cmd[1024];
     strcpy(cmd, _defaultDir.toStdString().c_str());
-    strcat(cmd, "/Configuration/raf/init_project ");
+    strcat(cmd, "/Configuration/init_project ");
     strcat(cmd, ProjName->text().toStdString().c_str());
     strcat(cmd, " ");
     strcat(cmd, platform.c_str());
@@ -101,7 +101,7 @@ void NewProjectDialog::accept()
     if (system(cmd) <= 0) {
       std::cerr << " ERROR!:  Call to init_project failed!\n";
     }
- 
+
     // get filename back to configwindow
     QString fileName;
 
