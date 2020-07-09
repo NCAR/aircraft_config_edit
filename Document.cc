@@ -869,15 +869,15 @@ void Document::addA2DCalFile(xercesc::DOMElement *sensorElem,
          calfileTagName);
   } catch (DOMException &e) {
      cerr << "dsmNode->getOwnerDocument()->createElementNS() threw exception\n";
-     throw InternalProcessingException("dsm create new dsm sample element: " 
+     throw InternalProcessingException("dsm create new dsm sample element: "
                              + (std::string)XMLStringConverter(e.getMessage()));
   }
 
   // set up the calfile node attributes
-  calfileElem->setAttribute((const XMLCh*)XMLStringConverter("path"), 
+  calfileElem->setAttribute((const XMLCh*)XMLStringConverter("path"),
                             (const XMLCh*)XMLStringConverter
-                            ("${PROJ_DIR}/Configuration/raf/cal_files/A2D/"));
-  calfileElem->setAttribute((const XMLCh*)XMLStringConverter("file"), 
+                            ("${PROJ_DIR}/Configuration/cal_files/A2D/"));
+  calfileElem->setAttribute((const XMLCh*)XMLStringConverter("file"),
                             (const XMLCh*)XMLStringConverter(a2dSNFname));
 
   sensorElem->appendChild(calfileElem);
@@ -885,8 +885,8 @@ void Document::addA2DCalFile(xercesc::DOMElement *sensorElem,
   return;
 }
 
-void Document::addSampAndVar(xercesc::DOMElement *sensorElem, 
-                             xercesc::DOMNode *dsmNode, 
+void Document::addSampAndVar(xercesc::DOMElement *sensorElem,
+                             xercesc::DOMNode *dsmNode,
                              const std::string & a2dTempSfx)
 {
   const XMLCh * sampTagName = 0;
