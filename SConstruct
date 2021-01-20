@@ -2,31 +2,14 @@
 ## 2011, Copyright University Corporation for Atmospheric Research
 
 import os
+import SCons
 import eol_scons
 
-env = Environment(tools = ['default', 'nidas', 'qt4', 'qtgui', 'qtcore', 'qtnetwork', 'jlocal', 'raf', 'boost_regex', 'logx', 'netcdf'])
+env = Environment(tools = ['default', 'nidas', 'qt4', 'qtgui', 'qtcore', 'qtnetwork', 'raf', 'boost_regex', 'netcdf'])
 
-opts = eol_scons.GlobalVariables('config.py')
-opts.AddVariables(('PREFIX',
-                   'installation path',
-                   '/opt/nidas', None, eol_scons.PathToAbsolute))
+env['CXXFLAGS'] = [ '-Wall','-O2','-std=c++11' ]
 
-opts.Update(env)
-
-# Check if $JLOCAL/include/raf and $JLOCAL/lib exist.
-#if not env.JLocalValid():
-#    print("Cannot find $JLOCAL/include/raf or $JLOCAL/lib. "
-#          "configedit will not be built")
-#    Return()
-
-# Override CXXFLAGS in order to turn off -Weffc++ for now
-env['CXXFLAGS'] = [ '-Wall','-O2' ]
-
-# Add this (possibly variant) directory to CPPPATH, so header files built
-# by uic will be found.
-env.Append(CPPPATH = ['.'])
-env.Append(LIBS=['VarDB', 'domx'])
-env.Require(['logx'])
+env.Require(['prefixoptions', 'vardb'])
 
 sources = Split("""
     main.cc
@@ -63,9 +46,7 @@ headers += env.Uic("""AddA2DVariableComboDialog.ui""")
 headers += env.Uic("""VariableComboDialog.ui""")
 headers += env.Uic("""NewProjectDialog.ui""")
 
-configedit = env.NidasProgram('configedit', sources)
+configedit = env.Program('configedit', sources)
+env.Default(configedit)
 
-name = env.subst("${TARGET.filebase}", target=configedit)
-
-inode = env.Install('$PREFIX/bin', configedit)
-env.Clean('install', inode)
+env.Install('$INSTALL_PREFIX/bin', 'configedit')
