@@ -31,6 +31,12 @@
 #include <fstream>
 #include "sys/stat.h"
 
+#include <QFileDialog>
+#include <QInputDialog>
+#include <QMenuBar>
+#include <QMenu>
+#include <QStatusBar>
+
 #include "configwindow.h"
 #include "exceptions/exceptions.h"
 #include "exceptions/QtExceptionHandler.h"
@@ -148,7 +154,7 @@ void ConfigWindow::buildProjectMenu()
 void ConfigWindow::quit()
 {
 cerr<<"ConfigWindow::quit() called \n";
-    if (_fileOpen) 
+    if (_fileOpen)
         if (!askSaveFileAndContinue()) return;
 
     QCoreApplication::quit();
@@ -219,7 +225,7 @@ void ConfigWindow::buildSensorActions()
     connect(addSensorAction, SIGNAL(triggered()), this, SLOT(addSensorCombo()));
 
     editSensorAction = new QAction(tr("&Edit Sensor"), this);
-    connect(editSensorAction, SIGNAL(triggered()), this, 
+    connect(editSensorAction, SIGNAL(triggered()), this,
             SLOT(editSensorCombo()));
 
     deleteSensorAction = new QAction(tr("&Delete Sensor"), this);
@@ -241,22 +247,22 @@ void ConfigWindow::buildDSMActions()
 void ConfigWindow::buildA2DVariableActions()
 {
     editA2DVariableAction = new QAction(tr("&Edit A2DVariable"), this);
-    connect(editA2DVariableAction, SIGNAL(triggered()), this,  
+    connect(editA2DVariableAction, SIGNAL(triggered()), this,
             SLOT(editA2DVariableCombo()));
 
     addA2DVariableAction = new QAction(tr("&Add A2DVariable"), this);
-    connect(addA2DVariableAction, SIGNAL(triggered()), this,  
+    connect(addA2DVariableAction, SIGNAL(triggered()), this,
             SLOT(addA2DVariableCombo()));
 
     deleteA2DVariableAction = new QAction(tr("&Delete A2DVariable"), this);
-    connect(deleteA2DVariableAction, SIGNAL(triggered()), this, 
+    connect(deleteA2DVariableAction, SIGNAL(triggered()), this,
             SLOT(deleteA2DVariable()));
 }
 
 void ConfigWindow::buildVariableActions()
 {
     editVariableAction = new QAction(tr("&Edit Variable"), this);
-    connect(editVariableAction, SIGNAL(triggered()), this,  
+    connect(editVariableAction, SIGNAL(triggered()), this,
             SLOT(editVariableCombo()));
 }
 
@@ -372,7 +378,7 @@ void ConfigWindow::deleteA2DVariable()
 void ConfigWindow::editVariableCombo()
 {
   // Get selected indexes and make sure it's only one
-  //   NOTE: properties should force this, but if it comes up may need to 
+  //   NOTE: properties should force this, but if it comes up may need to
   //         provide a GUI indication.
   QModelIndexList indexList = tableview->selectionModel()->selectedIndexes();
   if (indexList.size() > 6) {
@@ -454,7 +460,7 @@ void ConfigWindow::newProj()
   std::string projDir;
   char * tmpStr;
 
-  tmpStr = getenv("PROJ_DIR"); 
+  tmpStr = getenv("PROJ_DIR");
   if (tmpStr) {
     projDir.append(tmpStr);
   } else {
@@ -464,17 +470,17 @@ void ConfigWindow::newProj()
     _errorMessage->exec();
     return;
   }
-  
+
   newProjDialog->show();  // create new project
- 
+
   return;
 }
 
 void ConfigWindow::newFile()
 {
-    if (_fileOpen) 
+    if (_fileOpen)
         if (!askSaveFileAndContinue()) return;
-          
+
     getFile();
     openFile();
 }
@@ -591,7 +597,7 @@ cerr<<"printSiteNames\n";
             show(); // XXX
 
             winTitle.append(_filename);
-            setWindowTitle(winTitle);  
+            setWindowTitle(winTitle);
 
         }
         catch (const CancelProcessingException & cpe) {
@@ -602,7 +608,7 @@ cerr<<"printSiteNames\n";
             return;
 
             QStatusBar *sb = statusBar();
-            if (sb) sb->showMessage(QString::fromAscii(cpe.what()));
+            if (sb) sb->showMessage(QString::fromLatin1(cpe.what()));
         }
         catch(...) {
             // stop processing, show blank window
@@ -646,7 +652,7 @@ cerr<< "after call to QInputDialog::getText\n";
     if (ok && !text.isEmpty()) {
        writeProjectName(text);
     }
- 
+
     return;
 }
 
@@ -654,7 +660,7 @@ void ConfigWindow::writeProjectName(QString projName)
 {
     _doc->setProjectName(projName.toStdString());
 
-    // Now put the project name into a file in the Project Directory  
+    // Now put the project name into a file in the Project Directory
     //      (needed by nimbus)
     std::string dir =  _doc->getDirectory();
     std::string projDir(dir);
@@ -795,7 +801,7 @@ bool ConfigWindow::saveAsFile()
     if (saveFile(curFileName)) {
       QString winTitle("configedit:  ");
       winTitle.append(_filename);
-      setWindowTitle(winTitle);  
+      setWindowTitle(winTitle);
       return true;
     } else {
       _doc->setFilename(curFileName);
@@ -830,14 +836,14 @@ bool ConfigWindow::saveFileCopy(string origFile)
   char dateTime[64];
   dateTime[0] = '\0';
   now = time(NULL);
-  if (now != -1) 
+  if (now != -1)
     strftime(dateTime, 64, "%Y%m%d-%H%M%S", gmtime(&now));
-  else 
+  else
     cerr << "couldn't get timestamp for copy filename\n";
   copyFname = saveFname+"."+std::string(dateTime);
   copyFile = copyDir + "/" +copyFname;
 
-  if (origFile.length() == 0) 
+  if (origFile.length() == 0)
     fromFile = saveFileName;
   else
     fromFile = origFile;
@@ -947,9 +953,9 @@ void ConfigWindow::changeToIndex(const QModelIndex & index)
     tableview->sortByColumn(0, Qt::AscendingOrder);
     tableview->sortByColumn(1, Qt::AscendingOrder);
 
-  if (dynamic_cast<DSMItem*>(parentItem))  sensorMenu->setEnabled(true); 
+  if (dynamic_cast<DSMItem*>(parentItem))  sensorMenu->setEnabled(true);
   else sensorMenu->setEnabled(false);
-  
+
   if (dynamic_cast<SiteItem*>(parentItem)) dsmMenu->setEnabled(true);
   else dsmMenu->setEnabled(false);
 
@@ -964,7 +970,7 @@ void ConfigWindow::changeToIndex(const QModelIndex & index)
   }
 
   if (dynamic_cast<SensorItem*>(parentItem) &&
-      !dynamic_cast<A2DSensorItem*>(parentItem)) 
+      !dynamic_cast<A2DSensorItem*>(parentItem))
     variableMenu->setEnabled(true);
   else variableMenu->setEnabled(false);
 
@@ -1026,7 +1032,7 @@ bool ConfigWindow::askSaveFileAndContinue()
 {
   QMessageBox msgBox;
   int ret = 0;
- 
+
   if (_doc->isChanged() || _doc->isChangedBig()) {
     if (_doc->isChangedBig()) {
       QString msg("You have *significantly* modified the configuration.\n");
@@ -1041,7 +1047,7 @@ bool ConfigWindow::askSaveFileAndContinue()
     } else if (_doc->isChanged()) {
       msgBox.setText("You have modified the configuration.");
       msgBox.setInformativeText("Do you want to save your changes?");
-      msgBox.setStandardButtons(QMessageBox::Save | QMessageBox::Discard 
+      msgBox.setStandardButtons(QMessageBox::Save | QMessageBox::Discard
                                 | QMessageBox::Cancel);
       msgBox.setDefaultButton(QMessageBox::Save);
       ret = msgBox.exec();

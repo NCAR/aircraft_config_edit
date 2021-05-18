@@ -5,7 +5,7 @@ import os
 import SCons
 import eol_scons
 
-env = Environment(tools = ['default', 'nidas', 'qt4', 'qtgui', 'qtcore', 'qtnetwork', 'raf', 'boost_regex', 'netcdf'])
+env = Environment(tools = ['default', 'nidas', 'qt5', 'qtwidgets', 'qtgui', 'qtcore', 'qtnetwork', 'raf', 'boost_regex', 'netcdf'])
 
 env['CXXFLAGS'] = [ '-Wall','-O2','-std=c++11' ]
 
