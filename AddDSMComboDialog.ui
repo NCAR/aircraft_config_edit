@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>374</width>
-    <height>284</height>
+    <width>229</width>
+    <height>195</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -23,9 +23,9 @@
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>1</y>
-     <width>202</width>
-     <height>154</height>
+     <y>10</y>
+     <width>211</width>
+     <height>182</height>
     </rect>
    </property>
    <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -145,7 +145,6 @@
  <tabstops>
   <tabstop>DSMIdText</tabstop>
   <tabstop>LocationText</tabstop>
-  <tabstop>buttonBox</tabstop>
  </tabstops>
  <resources/>
  <connections>

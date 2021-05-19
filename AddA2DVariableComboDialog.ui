@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>469</width>
-    <height>361</height>
+    <width>480</width>
+    <height>400</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -19,13 +19,13 @@
   <property name="windowTitle">
    <string>Add Variable</string>
   </property>
-  <widget class="QWidget" name="">
+  <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
-     <x>1</x>
-     <y>3</y>
+     <x>10</x>
+     <y>10</y>
      <width>462</width>
-     <height>352</height>
+     <height>378</height>
     </rect>
    </property>
    <layout class="QVBoxLayout" name="verticalLayout_4">
@@ -365,14 +365,6 @@
     </item>
    </layout>
   </widget>
-  <zorder>layoutWidget</zorder>
-  <zorder>layoutWidget</zorder>
-  <zorder>layoutWidget_3</zorder>
-  <zorder>layoutWidget_2</zorder>
-  <zorder>layoutWidget_4</zorder>
-  <zorder>layoutWidget_5</zorder>
-  <zorder>layoutWidget_6</zorder>
-  <zorder>LongNameText</zorder>
  </widget>
  <tabstops>
   <tabstop>VariableBox</tabstop>
