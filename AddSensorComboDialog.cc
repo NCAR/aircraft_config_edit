@@ -43,24 +43,24 @@ QRegExp _idRegEx("\\d+");
  * - e.g. changes in SensorBox trigger a call to newSensor
  */
 
-AddSensorComboDialog::AddSensorComboDialog(QString a2dCalDir, 
-                                  QString pmsSpecsFile, QWidget *parent): 
+AddSensorComboDialog::AddSensorComboDialog(QString a2dCalDir,
+                                  QString pmsSpecsFile, QWidget *parent):
     QDialog(parent)
 {
   setupUi(this);
-  connect(SensorBox, SIGNAL(currentIndexChanged(const QString &)), this, 
+  connect(SensorBox, SIGNAL(currentIndexChanged(const QString &)), this,
            SLOT(dialogSetup(const QString &)));
   SensorBox->setSizeAdjustPolicy(QComboBox::AdjustToContents);
   A2DSNBox->setSizeAdjustPolicy(QComboBox::AdjustToContents);
 //  DeviceText->setValidator( new QRegExpValidator (_deviceRegEx, this ));
 
   IdText->setValidator( new QRegExpValidator ( _idRegEx, this));
-  
+
   setupA2DSerNums(a2dCalDir+"/DMMAT/");
   setupA2DSerNums(a2dCalDir);
 
   setupPMSSerNums(pmsSpecsFile);
- 
+
   _errorMessage = new QMessageBox(this);
   return;
 }
@@ -96,7 +96,7 @@ void AddSensorComboDialog::setupPMSSerNums(QString pmsSpecsFile)
   for (int i = 0; i < num; i++) {
     temp << string(list[i]) << "\n";
     serNum = string(list[i]);
-    resolution = pmsSpex.GetParameter(serNum, rangeStep); 
+    resolution = pmsSpex.GetParameter(serNum, rangeStep);
     dotLoc = resolution.find(".");
     if (dotLoc!=std::string::npos)
       resolution.replace(dotLoc,resolution.size()-dotLoc,"");
@@ -107,13 +107,13 @@ void AddSensorComboDialog::setupPMSSerNums(QString pmsSpecsFile)
 
   pmsSerialNums.sort();
   PMSSNBox->addItems(pmsSerialNums);
-  for (int i = 0; i<<num; i++) delete list[i];
+  for (int i = 0; i < num; i++) delete list[i];
 }
 
 /**
- * Obtains cal files for both NCAR A2D Cards 
+ * Obtains cal files for both NCAR A2D Cards
  * Takes QString a2dCalDir
- * Adds all a2dCalFiles to A2DSNBox 
+ * Adds all a2dCalFiles to A2DSNBox
  * Returns nothing
  * */
 void AddSensorComboDialog::setupA2DSerNums(QString a2dCalDir)
@@ -129,7 +129,7 @@ void AddSensorComboDialog::setupA2DSerNums(QString a2dCalDir)
   if ((dir = opendir(tmp_dir)) == 0)
   {
     QMessageBox *errorMessage = new QMessageBox(this);
-    errorMessage->setText("Could not open A2D calibrations directory: " + 
+    errorMessage->setText("Could not open A2D calibrations directory: " +
                           a2dCalDir +
                           "\n Can't provide serial numbers for A2D Cards.");
     errorMessage->exec();
@@ -158,13 +158,13 @@ void AddSensorComboDialog::setupA2DSerNums(QString a2dCalDir)
 
 void AddSensorComboDialog::dialogSetup(const QString & sensor)
 {
-  if (sensor == QString("ANALOG_NCAR")) 
+  if (sensor == QString("ANALOG_NCAR"))
   {
     A2DTempSuffixLabel->show();
     A2DTempSuffixText->show();
     A2DSNLabel->show();
     A2DSNBox->show();
-  }else if (sensor == QString("ANALOG_DMMAT")) 
+  }else if (sensor == QString("ANALOG_DMMAT"))
   {
     A2DTempSuffixLabel->hide();
     A2DTempSuffixText->hide();
@@ -179,7 +179,7 @@ void AddSensorComboDialog::dialogSetup(const QString & sensor)
   }
 
   if (sensor == QString("CDP") ||
-      sensor == QString("Fast2DC") || 
+      sensor == QString("Fast2DC") ||
       sensor == QString("S100") ||
       sensor == QString("S200") ||
       sensor == QString("S300") ||
@@ -208,7 +208,7 @@ void AddSensorComboDialog::accept()
     _errorMessage->exec();
     return;
   }
-  if (IdText->hasAcceptableInput()) 
+  if (IdText->hasAcceptableInput())
   {
 
     // Clean up the suffixes - one and exactly one underscore at the beginning
@@ -233,7 +233,7 @@ void AddSensorComboDialog::accept()
     std::cerr << " id: " + IdText->text().toStdString() + "\n";
     std::cerr << " suffix: " + SuffixText->text().toStdString() + "\n";
     std::cerr << " calfile: " + A2DSNBox->currentText().toStdString() + "\n";
-    std::cerr << " a2dTempSfx: " + A2DTempSuffixText->text().toStdString() 
+    std::cerr << " a2dTempSfx: " + A2DTempSuffixText->text().toStdString()
                  + "\n";
     std::cerr << " a2dSN: " + A2DSNBox->currentText().toStdString() + "\n";
     std::cerr << " pmsSN: " + PMSSNBox->currentText().toStdString() + "\n";
@@ -241,7 +241,7 @@ void AddSensorComboDialog::accept()
 
     try {
       if (_document) {
-        if (_indexList.size() > 0)  
+        if (_indexList.size() > 0)
           _document->updateSensor(SensorBox->currentText().toStdString(),
                               DeviceText->text().toStdString(),
                               IdText->text().toStdString(),
@@ -281,9 +281,9 @@ void AddSensorComboDialog::accept()
       _errorMessage->setText(QString::fromStdString("Invalid parameter: " + e.toString()));
       _errorMessage->exec();
       return; // do not accept, keep dialog up for further editing
-    } catch (...) { 
+    } catch (...) {
       _errorMessage->setText("Caught Unspecified error");
-      _errorMessage->exec(); 
+      _errorMessage->exec();
     }
 
     QDialog::accept(); // accept (or bail out) and make the dialog disappear
@@ -412,7 +412,7 @@ cerr<<"AddSensorItem IdText:"  << IdText<<"\n";
     if (baseName == "ANALOG_NCAR"){
         A2DTempSuffixText->insert(a2dSensorItem->getA2DTempSuffix());
         std::string a2dCalFn = a2dSensorItem->getCalFileName();
-    
+
         if (a2dCalFn.empty()) {
     cerr<<"AddSensorComboDialog4 setting edit text 5to" << baseName.toStdString() << "\n";
           _errorMessage->setText(QString::fromStdString(
@@ -428,8 +428,8 @@ cerr<<"AddSensorItem IdText:"  << IdText<<"\n";
           if (index != -1) A2DSNBox->setCurrentIndex(index);
           else {
             _errorMessage->setText(QString::fromStdString(
-                               "Could not find A2D Serial number cal file: ") 
-                           + QString::fromStdString(a2dCalFn) 
+                               "Could not find A2D Serial number cal file: ")
+                           + QString::fromStdString(a2dCalFn)
                            + QString::fromStdString (
                              ".  Suggest you look in to that missing file."));
             _errorMessage->exec();
@@ -439,7 +439,7 @@ cerr<<"AddSensorItem IdText:"  << IdText<<"\n";
   }
 
   if (baseName == QString("CDP") ||
-      baseName == QString("Fast2DC") || 
+      baseName == QString("Fast2DC") ||
       baseName == QString("S100") ||
       baseName == QString("S200") ||
       baseName == QString("S300") ||
@@ -470,7 +470,7 @@ cerr<<"AddSensorItem IdText:"  << IdText<<"\n";
   cerr << "end of existingSensor()\n";
 }
 
-void AddSensorComboDialog::show(NidasModel* model, 
+void AddSensorComboDialog::show(NidasModel* model,
                                 QModelIndexList indexList)
 {
   _model = model;
@@ -525,7 +525,7 @@ cerr<<"should probably not see this before existing sensor is called4"<<endl;
       if (_document) IdText->setText(QString::number(_document->getNextSensorId()));
       cerr<<"after call to getNextSensorId"<<endl;
     } catch ( InternalProcessingException &e) {
-      _errorMessage->setText(QString::fromStdString("Bad internal error. Get help! " + 
+      _errorMessage->setText(QString::fromStdString("Bad internal error. Get help! " +
                                                        e.toString()));
       _errorMessage->exec();
       return false;
