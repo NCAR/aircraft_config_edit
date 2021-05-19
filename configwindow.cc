@@ -36,6 +36,7 @@
 #include <QMenuBar>
 #include <QMenu>
 #include <QStatusBar>
+#include <QHeaderView>
 
 #include "configwindow.h"
 #include "exceptions/exceptions.h"
@@ -680,7 +681,7 @@ void ConfigWindow::writeProjectName(QString projName)
     std::string projFName;
     projFName = projDir + "/ProjectName";
     ofstream projFile(projFName.c_str());
-    if (projFile)
+    if (projFile) {
       projFile.close();
       if (remove(projFName.c_str()) != 0) {
         string error;
@@ -691,6 +692,7 @@ void ConfigWindow::writeProjectName(QString projName)
         _errorMessage->exec();
         return;
       }
+    }
     projFile.open(projFName.c_str(), ios::out);
     if (projFile.is_open()) {
       projFile << projName.toStdString().c_str() << "\n";
