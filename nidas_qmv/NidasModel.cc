@@ -66,7 +66,7 @@ NidasModel::~NidasModel()
 Qt::ItemFlags NidasModel::flags(const QModelIndex &index) const
 {
     if (!index.isValid())
-        return 0;
+        return Qt::NoItemFlags;
 
     return Qt::ItemIsEnabled | Qt::ItemIsSelectable;
 }

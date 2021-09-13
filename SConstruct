@@ -7,8 +7,7 @@ import eol_scons
 
 env = Environment(tools = ['default', 'nidas', 'qt5', 'qtwidgets', 'qtgui', 'qtcore', 'qtnetwork', 'raf', 'boost_regex', 'netcdf'])
 
-# Add no-deprecated until nidas can compile c++11.  The throw() warnings are voluminous.
-env['CXXFLAGS'] = [ '-Wall','-O2','-std=c++11','-Wno-deprecated' ]
+env['CXXFLAGS'] = [ '-Wall','-O2','-std=c++11' ]
 
 env.Require(['prefixoptions', 'vardb'])
 
