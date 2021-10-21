@@ -283,7 +283,7 @@ cerr<<"after call to addSensorCombo->show\n";
 
 void ConfigWindow::editSensorCombo()
 {
-  // Get selected index list and make sure it's only one 
+  // Get selected index list and make sure it's only one
   //    (see note in editA2DVariableCombo)
   QModelIndexList indexList = tableview->selectionModel()->selectedIndexes();
   if (indexList.size() > 6) {
@@ -317,7 +317,7 @@ void ConfigWindow::addDSMCombo()
 
 void ConfigWindow::editDSMCombo()
 {
-  // Get selected index list and make sure it's only one 
+  // Get selected index list and make sure it's only one
   //    (see note in editA2DVariableCombo)
   QModelIndexList indexList = tableview->selectionModel()->selectedIndexes();
   if (indexList.size() > 2) {
@@ -352,7 +352,7 @@ void ConfigWindow::addA2DVariableCombo()
 void ConfigWindow::editA2DVariableCombo()
 {
   // Get selected indexes and make sure it's only one
-  //   NOTE: properties should force this, but if it comes up may need to 
+  //   NOTE: properties should force this, but if it comes up may need to
   //         provide a GUI indication.
   QModelIndexList indexList = tableview->selectionModel()->selectedIndexes();
   if (indexList.size() > 8) {
@@ -878,12 +878,12 @@ bool ConfigWindow::saveFileCopy(string origFile)
   dest << src.rdbuf();
   if (!dest)
   {
-     cerr << "Error while copying from: \n" << fromFile << 
+     cerr << "Error while copying from: \n" << fromFile <<
              "\n to: \n" << copyFile << "\n";
      return false;
   }
 
-  cerr << "copied from: \n" << fromFile << 
+  cerr << "copied from: \n" << fromFile <<
           "\n to: \n" << copyFile << "\n";
 
   return true;

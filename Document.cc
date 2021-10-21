@@ -244,7 +244,7 @@ void Document::parseFile()
     if (!filename) return;
 
     XMLParser * parser = new XMLParser();
-    
+
     // turn on validation
     parser->setDOMValidation(true);
     parser->setDOMValidateIfSchema(true);
@@ -275,12 +275,12 @@ void Document::parseFile()
     cerr<<"Engineering cal dir = ";
     cerr<<_engCalDir.toStdString();
     cerr<<"\n";
- 
+
     DIR *dir;
     char *temp_dir = (char*) malloc(_engCalDir.size()+1);
- 
+
     strcpy(temp_dir, _engCalDir.toStdString().c_str());
- 
+
     if ((dir = opendir(temp_dir)) == 0) {
        _engCalDirExists = false;
        return;
@@ -305,7 +305,7 @@ void Document::parseFile()
             cerr<<entry->d_name<<" ";
         }
     cerr<<"\n";
-   
+
     free(temp_dir);
 }
 
@@ -327,16 +327,16 @@ void Document::setProjectName(string projectName)
     throw InternalProcessingException("null Project DOM node");
   }
 
-  if (projectNode->getNodeType() != xercesc::DOMNode::ELEMENT_NODE) 
+  if (projectNode->getNodeType() != xercesc::DOMNode::ELEMENT_NODE)
     throw InternalProcessingException("Project DOM Node is not an Element Node!");
   xercesc::DOMElement * projectElement = ((xercesc::DOMElement*) projectNode);
 
   //xercesc::DOMElement * projectElement = dynamic_cast<DOMElement*>(projectNode);
   //if (!projectElement)
   //  throw InternalProcessingException("Project DOM Node is not an Element Node!");
-  
-  projectElement->removeAttribute((const XMLCh*)XMLStringConverter("name")); 
-  projectElement->setAttribute((const XMLCh*)XMLStringConverter("name"), 
+
+  projectElement->removeAttribute((const XMLCh*)XMLStringConverter("name"));
+  projectElement->setAttribute((const XMLCh*)XMLStringConverter("name"),
                               (const XMLCh*)XMLStringConverter(projectName));
 
   // Now set the project name in the nidas tree
@@ -371,17 +371,17 @@ const xercesc::DOMElement* Document::findSensor(const std::string & sensorIdName
     return(NULL);
 }
 
-void Document::updateSensor(const std::string & sensorIdName, 
-                            const std::string & device, 
+void Document::updateSensor(const std::string & sensorIdName,
+                            const std::string & device,
                             const std::string & lcId,
-                            const std::string & sfx, 
+                            const std::string & sfx,
                             const std::string & a2dTempSfx,
                             const std::string & a2dSNFname,
                             const std::string & pmsSN,
                             const std::string & resltn,
                             QModelIndexList indexList)
 {
-cerr<<"entering Document::updateSensor\n"; 
+cerr<<"entering Document::updateSensor\n";
 
   // Gather together all the elements we'll need to update the Sensor
   // in both the DOM model and the Nidas Model
@@ -400,7 +400,7 @@ cerr<<"entering Document::updateSensor\n";
       QModelIndex index = indexList[i];
       // the NidasItem for the selected row resides in column 0
       if (index.column() != 0) continue;
-      if (!index.isValid()) continue; 
+      if (!index.isValid()) continue;
       item = model->getItem(index);
     }
   }
@@ -429,7 +429,7 @@ cerr<<"entering Document::updateSensor\n";
     }
   }
 
-  // Start by updating the sensor DOM 
+  // Start by updating the sensor DOM
   updateSensorDOM(sItem, device, lcId, sfx);
 
   // If we've got an analog sensor then we need to update it's temp suffix
@@ -443,7 +443,7 @@ cerr<< "calling updateDOMCalFile("<<a2dSNFname<<")\n";
   // If we've got a PMS sensor then we need to update it's serial number
   if (pmsSensorItem)
     pmsSensorItem->updateDOMPMSParams(pmsSN, resltn);
-  
+
   // Now we need to validate that all is right with the updated sensor
   // information - and if not change it all back to the original state
   try {
@@ -459,7 +459,7 @@ cerr<< "calling updateDOMCalFile("<<a2dSNFname<<")\n";
     strS<<currSensorId;
     updateSensorDOM(sItem, currDevName, strS.str(), currSuffix);
     if (a2dSensorItem) {
-      a2dSensorItem->updateDOMA2DTempSfx(QString::fromStdString(a2dTempSfx), 
+      a2dSensorItem->updateDOMA2DTempSfx(QString::fromStdString(a2dTempSfx),
                                          currA2DTempSfx.toStdString());
       a2dSensorItem->updateDOMCalFile(currA2DCalFname);
     }
@@ -471,7 +471,7 @@ cerr<< "calling updateDOMCalFile("<<a2dSNFname<<")\n";
     strS<<currSensorId;
     this->updateSensorDOM(sItem, currDevName, strS.str(), currSuffix);
     if (a2dSensorItem) {
-      a2dSensorItem->updateDOMA2DTempSfx(QString::fromStdString(a2dTempSfx), 
+      a2dSensorItem->updateDOMA2DTempSfx(QString::fromStdString(a2dTempSfx),
                                          currA2DTempSfx.toStdString());
       a2dSensorItem->updateDOMCalFile(currA2DCalFname);
     }
@@ -500,32 +500,32 @@ void Document::updateSensorDOM(SensorItem * sItem, const std::string & device,
 
   // setup the DOM element from user input
   sensorElem->removeAttribute((const XMLCh*)XMLStringConverter("devicename"));
-  sensorElem->setAttribute((const XMLCh*)XMLStringConverter("devicename"), 
+  sensorElem->setAttribute((const XMLCh*)XMLStringConverter("devicename"),
                            (const XMLCh*)XMLStringConverter(device));
   sensorElem->removeAttribute((const XMLCh*)XMLStringConverter("id"));
-  sensorElem->setAttribute((const XMLCh*)XMLStringConverter("id"), 
+  sensorElem->setAttribute((const XMLCh*)XMLStringConverter("id"),
                      (const XMLCh*)XMLStringConverter(lcId));
   if ((sensorElem->getAttributeNode((const XMLCh*)XMLStringConverter("suffix")) != NULL))
     sensorElem->removeAttribute((const XMLCh*)XMLStringConverter("suffix"));
 
   if (!sfx.empty()) {
-    sensorElem->setAttribute((const XMLCh*)XMLStringConverter("suffix"), 
+    sensorElem->setAttribute((const XMLCh*)XMLStringConverter("suffix"),
                              (const XMLCh*)XMLStringConverter(sfx));
   }
 }
 
 
-void Document::addSensor(const std::string & sensorIdName, 
+void Document::addSensor(const std::string & sensorIdName,
                          const std::string & device,
-                         const std::string & lcId, 
-                         const std::string & sfx, 
-                         const std::string & a2dTempSfx, 
+                         const std::string & lcId,
+                         const std::string & sfx,
+                         const std::string & a2dTempSfx,
                          const std::string & a2dSNFname,
                          const std::string & pmsSN,
                          const std::string & resltn)
 {
 cerr << "entering Document::addSensor about to make call to "
-     << "_configWindow->getModel()\n  configwindow address = " 
+     << "_configWindow->getModel()\n  configwindow address = "
      << _configWindow << "\n";
   NidasModel *model = _configWindow->getModel();
   DSMItem* dsmItem = dynamic_cast<DSMItem*>(model->getCurrentRootItem());
@@ -541,7 +541,7 @@ cerr << "entering Document::addSensor about to make call to "
   XMLStringConverter xmlSensor("sensor");
   if (sensorIdName == "ANALOG_NCAR"||sensorIdName =="ANALOG_DMMAT") {
     tagName = (const XMLCh *) xmlSensor;
-    cerr << "Analog Tag Name is " <<  (std::string)XMLStringConverter(tagName) << endl;   
+    cerr << "Analog Tag Name is " <<  (std::string)XMLStringConverter(tagName) << endl;
   } else { // look for the sensor ID in the catalog
     const DOMElement * sensorCatElement;
     sensorCatElement = findSensor(sensorIdName);
@@ -572,21 +572,21 @@ cerr << "entering Document::addSensor about to make call to "
 
     // setup the new DOM element from user input
   if (sensorIdName == "ANALOG_NCAR") {
-    elem->setAttribute((const XMLCh*)XMLStringConverter("class"), 
+    elem->setAttribute((const XMLCh*)XMLStringConverter("class"),
                        (const XMLCh*)XMLStringConverter("raf.DSMAnalogSensor"));
   } else if (sensorIdName == "ANALOG_DMMAT") {
-    elem->setAttribute((const XMLCh*)XMLStringConverter("class"), 
+    elem->setAttribute((const XMLCh*)XMLStringConverter("class"),
                        (const XMLCh*)XMLStringConverter("DSC_A2DSensor"));
   }else {
-    elem->setAttribute((const XMLCh*)XMLStringConverter("IDREF"), 
+    elem->setAttribute((const XMLCh*)XMLStringConverter("IDREF"),
                        (const XMLCh*)XMLStringConverter(sensorIdName));
   }
-  elem->setAttribute((const XMLCh*)XMLStringConverter("devicename"), 
+  elem->setAttribute((const XMLCh*)XMLStringConverter("devicename"),
                      (const XMLCh*)XMLStringConverter(device));
-  elem->setAttribute((const XMLCh*)XMLStringConverter("id"), 
+  elem->setAttribute((const XMLCh*)XMLStringConverter("id"),
                      (const XMLCh*)XMLStringConverter(lcId));
-  if (!sfx.empty()) 
-    elem->setAttribute((const XMLCh*)XMLStringConverter("suffix"), 
+  if (!sfx.empty())
+    elem->setAttribute((const XMLCh*)XMLStringConverter("suffix"),
                        (const XMLCh*)XMLStringConverter(sfx));
 
   // If we've got an analog sensor then we need to set up a calibration file,
@@ -666,7 +666,7 @@ vector <std::string> Document::getSiteNames()
     for (SiteIterator si = _project->getSiteIterator(); si.hasNext(); ) {
         Site * site = si.next();
         siteName = site->getName();
-        sites.push_back(siteName);       
+        sites.push_back(siteName);
     }
     return sites;
 }
@@ -755,14 +755,14 @@ void Document::addA2DRate(xercesc::DOMElement *sensorElem,
          paramTagName);
   } catch (DOMException &e) {
      cerr << "dsmNode->getOwnerDocument()->createElementNS() threw exception\n";
-     throw InternalProcessingException("dsm create new dsm sample element: " + 
+     throw InternalProcessingException("dsm create new dsm sample element: " +
                               (std::string)XMLStringConverter(e.getMessage()));
   }
 
   // set up the rate parameter node attributes
-  paramElem->setAttribute((const XMLCh*)XMLStringConverter("name"), 
+  paramElem->setAttribute((const XMLCh*)XMLStringConverter("name"),
                             (const XMLCh*)XMLStringConverter("rate"));
-  paramElem->setAttribute((const XMLCh*)XMLStringConverter("value"), 
+  paramElem->setAttribute((const XMLCh*)XMLStringConverter("value"),
                             (const XMLCh*)XMLStringConverter("500"));
   paramElem->setAttribute((const XMLCh*)XMLStringConverter("type"),
                             (const XMLCh*)XMLStringConverter("int"));
@@ -789,16 +789,16 @@ void Document::addPMSParms(xercesc::DOMElement *sensorElem,
          pmsSNTagName);
   } catch (DOMException &e) {
      cerr << "dsmNode->getOwnerDocument()->createElementNS() threw exception\n";
-     throw InternalProcessingException("dsm create new PMS Ser Num element: " 
+     throw InternalProcessingException("dsm create new PMS Ser Num element: "
                              + (std::string)XMLStringConverter(e.getMessage()));
   }
 
   // set up the PMS Serial Number parameter node attributes
-  pmsSNElem->setAttribute((const XMLCh*)XMLStringConverter("name"), 
+  pmsSNElem->setAttribute((const XMLCh*)XMLStringConverter("name"),
                             (const XMLCh*)XMLStringConverter("SerialNumber"));
-  pmsSNElem->setAttribute((const XMLCh*)XMLStringConverter("value"), 
+  pmsSNElem->setAttribute((const XMLCh*)XMLStringConverter("value"),
                             (const XMLCh*)XMLStringConverter(pmsSN));
-  pmsSNElem->setAttribute((const XMLCh*)XMLStringConverter("type"), 
+  pmsSNElem->setAttribute((const XMLCh*)XMLStringConverter("type"),
                             (const XMLCh*)XMLStringConverter("string"));
 
   sensorElem->appendChild(pmsSNElem);
@@ -808,7 +808,7 @@ void Document::addPMSParms(xercesc::DOMElement *sensorElem,
     const XMLCh * paramTagName = 0;
     XMLStringConverter xmlSamp("parameter");
     paramTagName = (const XMLCh *) xmlSamp;
-  
+
     // Create a new DOM element for the param element.
     xercesc::DOMElement* paramElem = 0;
     try {
@@ -822,11 +822,11 @@ void Document::addPMSParms(xercesc::DOMElement *sensorElem,
     }
 
     // set up the rate parameter node attributes
-    paramElem->setAttribute((const XMLCh*)XMLStringConverter("name"), 
+    paramElem->setAttribute((const XMLCh*)XMLStringConverter("name"),
                               (const XMLCh*)XMLStringConverter("RESOLUTION"));
     paramElem->setAttribute((const XMLCh*)XMLStringConverter("type"),
                               (const XMLCh*)XMLStringConverter("int"));
-    paramElem->setAttribute((const XMLCh*)XMLStringConverter("value"), 
+    paramElem->setAttribute((const XMLCh*)XMLStringConverter("value"),
                               (const XMLCh*)XMLStringConverter(pmsResltn));
 
     sensorElem->appendChild(paramElem);
@@ -835,7 +835,7 @@ void Document::addPMSParms(xercesc::DOMElement *sensorElem,
   return;
 }
 
-void Document::addMissingEngCalFile(QString filename) 
+void Document::addMissingEngCalFile(QString filename)
 {
   bool inList = false;
 
@@ -901,19 +901,19 @@ void Document::addSampAndVar(xercesc::DOMElement *sensorElem,
          sampTagName);
   } catch (DOMException &e) {
      cerr << "dsmNode->getOwnerDocument()->createElementNS() threw exception\n";
-     throw InternalProcessingException("dsm create new dsm sample element: " + 
+     throw InternalProcessingException("dsm create new dsm sample element: " +
                               (std::string)XMLStringConverter(e.getMessage()));
   }
 
   // set up the sample node attributes
-  sampElem->setAttribute((const XMLCh*)XMLStringConverter("id"), 
+  sampElem->setAttribute((const XMLCh*)XMLStringConverter("id"),
                          (const XMLCh*)XMLStringConverter("1"));
-  sampElem->setAttribute((const XMLCh*)XMLStringConverter("rate"), 
+  sampElem->setAttribute((const XMLCh*)XMLStringConverter("rate"),
                          (const XMLCh*)XMLStringConverter("1"));
 
   // The sample Element needs an A2D Temperature parameter and variable element
   xercesc::DOMElement* a2dTempParmElem = createA2DTempParmElement(dsmNode);
-  xercesc::DOMElement* a2dTempVarElem = createA2DTempVarElement(dsmNode, 
+  xercesc::DOMElement* a2dTempVarElem = createA2DTempVarElement(dsmNode,
                                                                 a2dTempSfx);
 
   // Now add the fully qualified sample to the sensor node
@@ -921,11 +921,11 @@ void Document::addSampAndVar(xercesc::DOMElement *sensorElem,
   sampElem->appendChild(a2dTempVarElem);
   sensorElem->appendChild(sampElem);
 
-  return; 
+  return;
 }
 
-void Document::updateSampAndVar(xercesc::DOMElement *sensorElem, 
-                                xercesc::DOMNode *dsmNode, 
+void Document::updateSampAndVar(xercesc::DOMElement *sensorElem,
+                                xercesc::DOMNode *dsmNode,
                                 const std::string & a2dTempSfx)
 {
   const XMLCh * sampTagName = 0;
@@ -956,7 +956,7 @@ void Document::updateSampAndVar(xercesc::DOMElement *sensorElem,
   sampElem->appendChild(a2dTempVarElem);
   sensorElem->appendChild(sampElem);
 
-  return; 
+  return;
 }
 
 xercesc::DOMElement* Document::createA2DTempParmElement(xercesc::DOMNode *seniorNode)
@@ -974,16 +974,16 @@ xercesc::DOMElement* Document::createA2DTempParmElement(xercesc::DOMNode *senior
          parmTagName);
   } catch (DOMException &e) {
      cerr << "Document::createA2DTempParmElement: seniorNode->getOwnerDocument()->createElementNS() threw exception\n";
-     throw InternalProcessingException("dsm create new variableelement:  " + 
+     throw InternalProcessingException("dsm create new variableelement:  " +
                             (std::string)XMLStringConverter(e.getMessage()));
   }
 
   // set up the variable node attributes
-  parmElem->setAttribute((const XMLCh*)XMLStringConverter("name"), 
+  parmElem->setAttribute((const XMLCh*)XMLStringConverter("name"),
                         (const XMLCh*)XMLStringConverter("temperature"));
-  parmElem->setAttribute((const XMLCh*)XMLStringConverter("value"), 
+  parmElem->setAttribute((const XMLCh*)XMLStringConverter("value"),
                         (const XMLCh*)XMLStringConverter("true"));
-  parmElem->setAttribute((const XMLCh*)XMLStringConverter("type"), 
+  parmElem->setAttribute((const XMLCh*)XMLStringConverter("type"),
                         (const XMLCh*)XMLStringConverter("bool"));
 
   return parmElem;
@@ -1004,16 +1004,16 @@ xercesc::DOMElement* Document::createA2DTempVarElement(xercesc::DOMNode *seniorN
          varTagName);
   } catch (DOMException &e) {
      cerr << "Document::createA2DTempVarElement: seniorNode->getOwnerDocument()->createElementNS() threw exception\n";
-     throw InternalProcessingException("dsm create new variableelement:  " + 
+     throw InternalProcessingException("dsm create new variableelement:  " +
                             (std::string)XMLStringConverter(e.getMessage()));
   }
 
   // set up the variable node attributes
-  varElem->setAttribute((const XMLCh*)XMLStringConverter("longname"), 
+  varElem->setAttribute((const XMLCh*)XMLStringConverter("longname"),
                         (const XMLCh*)XMLStringConverter("A2DTemperature"));
-  varElem->setAttribute((const XMLCh*)XMLStringConverter("name"), 
+  varElem->setAttribute((const XMLCh*)XMLStringConverter("name"),
                         (const XMLCh*)XMLStringConverter("A2DTEMP" + a2dTempSfx));
-  varElem->setAttribute((const XMLCh*)XMLStringConverter("units"), 
+  varElem->setAttribute((const XMLCh*)XMLStringConverter("units"),
                         (const XMLCh*)XMLStringConverter("deg_C"));
 
   return varElem;
@@ -1144,8 +1144,8 @@ unsigned int Document::validateSampleInfo(DSMSensor *sensor, const std::string &
   return iSampleId;
 }
 
-xercesc::DOMElement* Document::createSampleElement(xercesc::DOMNode *sensorNode, 
-                         const std::string & sampleId, 
+xercesc::DOMElement* Document::createSampleElement(xercesc::DOMNode *sensorNode,
+                         const std::string & sampleId,
                          const std::string & sampleRate,
                          const std::string & sampleFilter)
 {
@@ -1166,11 +1166,11 @@ xercesc::DOMElement* Document::createSampleElement(xercesc::DOMNode *sensorNode,
   }
 
   // setup the new Sample DOM element from user input
-cerr << "  setting samp element attribs: id = " << sampleId 
+cerr << "  setting samp element attribs: id = " << sampleId
      << "  rate = " << sampleRate << "\n";
-  sampleElem->setAttribute((const XMLCh*)XMLStringConverter("id"), 
+  sampleElem->setAttribute((const XMLCh*)XMLStringConverter("id"),
                            (const XMLCh*)XMLStringConverter(sampleId));
-  sampleElem->setAttribute((const XMLCh*)XMLStringConverter("rate"), 
+  sampleElem->setAttribute((const XMLCh*)XMLStringConverter("rate"),
                            (const XMLCh*)XMLStringConverter(sampleRate));
 
   int sRate = atoi(sampleRate.c_str());
@@ -1195,7 +1195,7 @@ cerr << "  setting samp element attribs: id = " << sampleId
                   (std::string)XMLStringConverter(e.getMessage()));
       }
     }
-    
+
     // fill in parameter info
     paramElems[0]->setAttribute((const XMLCh*)XMLStringConverter("name"),
                                 (const XMLCh*)XMLStringConverter("filter"));
@@ -1209,7 +1209,7 @@ cerr << "  setting samp element attribs: id = " << sampleId
                                 (const XMLCh*)XMLStringConverter(strS.str()));
     paramElems[1]->setAttribute((const XMLCh*)XMLStringConverter("type"),
                                 (const XMLCh*)XMLStringConverter("int"));
-    
+
     sampleElem->appendChild(paramElems[0]);
     sampleElem->appendChild(paramElems[1]);
   }
@@ -1218,7 +1218,7 @@ cerr << "  setting samp element attribs: id = " << sampleId
 }
 
 void Document::addDSM(const std::string & dsmName, const std::string & dsmId,
-                         const std::string & dsmLocation) 
+                         const std::string & dsmLocation)
 //               throw (nidas::util::InvalidParameterException, InternalProcessingException)
 {
 cerr<<"entering Document::addDSM about to make call to _configWindow->getModel()"  <<"\n"
@@ -1261,17 +1261,17 @@ cerr<<"entering Document::addDSM about to make call to _configWindow->getModel()
 
   // setup the new DSM DOM element from user input
   //  TODO: are the three "fixed" attributes ok?  e.g. derivedData only needed for certain sensors.
-  dsmElem->setAttribute((const XMLCh*)XMLStringConverter("name"), 
+  dsmElem->setAttribute((const XMLCh*)XMLStringConverter("name"),
                         (const XMLCh*)XMLStringConverter(dsmName));
-  dsmElem->setAttribute((const XMLCh*)XMLStringConverter("id"), 
+  dsmElem->setAttribute((const XMLCh*)XMLStringConverter("id"),
                         (const XMLCh*)XMLStringConverter(dsmId));
-  if (!dsmLocation.empty()) dsmElem->setAttribute((const XMLCh*)XMLStringConverter("location"), 
+  if (!dsmLocation.empty()) dsmElem->setAttribute((const XMLCh*)XMLStringConverter("location"),
                                                   (const XMLCh*)XMLStringConverter(dsmLocation));
-  dsmElem->setAttribute((const XMLCh*)XMLStringConverter("rserialPort"), 
+  dsmElem->setAttribute((const XMLCh*)XMLStringConverter("rserialPort"),
                         (const XMLCh*)XMLStringConverter("30002"));
-  dsmElem->setAttribute((const XMLCh*)XMLStringConverter("statusAddr"), 
+  dsmElem->setAttribute((const XMLCh*)XMLStringConverter("statusAddr"),
                         (const XMLCh*)XMLStringConverter("sock::30001"));
-  dsmElem->setAttribute((const XMLCh*)XMLStringConverter("derivedData"), 
+  dsmElem->setAttribute((const XMLCh*)XMLStringConverter("derivedData"),
                         (const XMLCh*)XMLStringConverter("sock::7071"));
 
   // The DSM needs an IRIG card sensor type
@@ -1287,16 +1287,16 @@ cerr<<"entering Document::addDSM about to make call to _configWindow->getModel()
          sensorTagName);
   } catch (DOMException &e) {
      cerr << "siteNode->getOwnerDocument()->createElementNS() threw exception\n";
-     throw InternalProcessingException("dsm create new dsm sensor element: " + 
+     throw InternalProcessingException("dsm create new dsm sensor element: " +
                                       (std::string)XMLStringConverter(e.getMessage()));
   }
 
   // set up the sensor node attributes
-  sensorElem->setAttribute((const XMLCh*)XMLStringConverter("IDREF"), 
+  sensorElem->setAttribute((const XMLCh*)XMLStringConverter("IDREF"),
                            (const XMLCh*)XMLStringConverter("IRIG"));
-  sensorElem->setAttribute((const XMLCh*)XMLStringConverter("devicename"), 
+  sensorElem->setAttribute((const XMLCh*)XMLStringConverter("devicename"),
                            (const XMLCh*)XMLStringConverter("/dev/irig0"));
-  sensorElem->setAttribute((const XMLCh*)XMLStringConverter("id"), 
+  sensorElem->setAttribute((const XMLCh*)XMLStringConverter("id"),
                            (const XMLCh*)XMLStringConverter("100"));
 
   string suffix = dsmName;
@@ -1304,7 +1304,7 @@ cerr<<"entering Document::addDSM about to make call to _configWindow->getModel()
   if (found != string::npos)
     suffix.replace(found,3,"");
   suffix.insert(0,"_");
-  sensorElem->setAttribute((const XMLCh*)XMLStringConverter("suffix"), 
+  sensorElem->setAttribute((const XMLCh*)XMLStringConverter("suffix"),
                            (const XMLCh*)XMLStringConverter(suffix));
 
   dsmElem->appendChild(sensorElem);
@@ -1315,8 +1315,8 @@ cerr<< "appended sensor element to dsmElem \n";
   dsmElem->appendChild(outElem);
 
   // The DSM node needs an output node w/server port
-  // HMM - not sure where I came up with that idea - seems this is 
-  // type of output is only needed on rare occasion 
+  // HMM - not sure where I came up with that idea - seems this is
+  // type of output is only needed on rare occasion
   //  better to stick with just mcrequest type outputs
   //xercesc::DOMElement* servOutElem = createDsmServOutElem(siteNode);
   //dsmElem->appendChild(servOutElem);
@@ -1343,7 +1343,7 @@ cerr<< "appended sensor element to dsmElem \n";
     }
 
     site->addDSMConfig(dsm);
- 
+
 cerr<<"added DSMConfig to the site\n";
 
 //    DSMSensor* sensor = dsm->sensorFromDOMElement(dsmElem);
@@ -1426,14 +1426,14 @@ cerr<<" Getting and validating site.\n";
   }
 }
 
-void Document::updateDSMDOM(DSMItem* dsmItem, 
+void Document::updateDSMDOM(DSMItem* dsmItem,
                             const std::string & dsmName,
-                            const std::string & dsmId, 
+                            const std::string & dsmId,
                             const std::string & dsmLocation)
 {
   // get DOM node for this DSM
   xercesc::DOMNode *dsmNode = dsmItem->getDOMNode();
-  if (!dsmNode) 
+  if (!dsmNode)
     throw InternalProcessingException("null DSM DOM node!");
 
   // get the DOM Element for this DSM
@@ -1444,7 +1444,7 @@ void Document::updateDSMDOM(DSMItem* dsmItem,
   // insert new values into the DOM element
 
   dsmElem->removeAttribute((const XMLCh*)XMLStringConverter("name"));
-  dsmElem->setAttribute((const XMLCh*)XMLStringConverter("name"), 
+  dsmElem->setAttribute((const XMLCh*)XMLStringConverter("name"),
                         (const XMLCh*)XMLStringConverter(dsmName));
   dsmElem->removeAttribute((const XMLCh*)XMLStringConverter("id"));
   dsmElem->setAttribute((const XMLCh*)XMLStringConverter("id"),
@@ -1483,7 +1483,7 @@ cerr << "dsmConfig name : " << dsmConfig->getName() << endl;
   const std::list<DSMSensor*>& sensors = dsmConfig->getSensors();
 cerr<< "after call to dsmConfig->getSensors" << endl;
 
-  for (list<DSMSensor*>::const_iterator si = sensors.begin();si != sensors.end(); si++) 
+  for (list<DSMSensor*>::const_iterator si = sensors.begin();si != sensors.end(); si++)
   {
 if (*si == 0) cerr << "si is zero" << endl;
 cerr<<" si is: " << (*si)->getName() << endl;
@@ -1538,10 +1538,10 @@ cerr<< "in getAvailableA2DChannels" << endl;
 }
 
 /*
- * Provide a DSM ID that would seem to make sense.  Assume that it is not a 
+ * Provide a DSM ID that would seem to make sense.  Assume that it is not a
  * wing based DSM (by convention id's start with _MIN_WING_DSM_ID for their
- * nidas ID) and that it needs the "next" number available that is not 
- * (i.e. is less than) a wing dsm id. 
+ * nidas ID) and that it needs the "next" number available that is not
+ * (i.e. is less than) a wing dsm id.
  *
  */
 unsigned int Document::getNextDSMId()
@@ -1570,11 +1570,11 @@ cerr << "Site name : " << site->getName() << endl;
   const std::list<DSMConfig*>& dsmConfigs = site->getDSMConfigs();
 cerr<< "after call to site->getDSMConfigs" << endl;
 
-  for (list<DSMConfig*>::const_iterator di = dsmConfigs.begin();di != dsmConfigs.end(); di++) 
+  for (list<DSMConfig*>::const_iterator di = dsmConfigs.begin();di != dsmConfigs.end(); di++)
   {
 if (*di == 0) cerr << "di is zero" << endl;
 cerr<<" di is: " << (*di)->getName() << endl;
-    if (((*di)->getId() > maxDSMId) && ((*di)->getId() < _MIN_WING_DSM_ID)) 
+    if (((*di)->getId() > maxDSMId) && ((*di)->getId() < _MIN_WING_DSM_ID))
       maxDSMId = (*di)->getId();
 cerr<< "after call to getDSMId" << endl;
   }
@@ -1585,10 +1585,10 @@ cerr<< "returning maxDSMId" << maxDSMId << endl;
 }
 
 void Document::updateVariable(VariableItem * varItem,
-                              const std::string & varName, 
-                              const std::string & varLongName, 
-                              const std::string & varSR, 
-                              const std::string & varUnits, 
+                              const std::string & varName,
+                              const std::string & varLongName,
+                              const std::string & varSR,
+                              const std::string & varUnits,
                               vector <std::string> cals,
                               bool useCalfile)
 {
@@ -1607,11 +1607,11 @@ void Document::updateVariable(VariableItem * varItem,
                     ("Current root nidasItem  is not a DSMSensor.");
   cerr << "  got sensor item \n";
 
-  // We need to make a copy of the whole of the sample 
+  // We need to make a copy of the whole of the sample
   // element either from the catalog or from the previous instantiation
-  // of the sample element in the sensor element.  So see if it's from 
-  // a previous instantiation within the sensor element and if so, copy that 
-  // instantiation and update the variable accordingly.  If not then it must be 
+  // of the sample element in the sensor element.  So see if it's from
+  // a previous instantiation within the sensor element and if so, copy that
+  // instantiation and update the variable accordingly.  If not then it must be
   // an IDREF from the sensorcatalog, get a copy of that sample element
   // modify its variable and put it in place
   // otherwise then something's really wrong!
@@ -1622,15 +1622,15 @@ void Document::updateVariable(VariableItem * varItem,
   DOMNode *newSampleNode = 0;
   DOMElement *newSampleElem = 0;
   DOMNode * variableNode = 0;
-  
+
   cerr<<" Testing varItem - name = "<<varItem->name().toStdString()<<"\n";
-  cerr<<"  about to findSampleDOMNode for sampleID: " 
+  cerr<<"  about to findSampleDOMNode for sampleID: "
       << varItem->getSampleId() << "\n";
   sampleNode = sensorItem->findSampleDOMNode(varItem->getSampleId());
   if (sampleNode != 0) {  // sample is defined in <sensor>
     cerr<<"  found sample node defined in <site> xml - looking for var\n";
-  
-    newSampleNode = sampleNode->cloneNode(true); // complete copy 
+
+    newSampleNode = sampleNode->cloneNode(true); // complete copy
     origSampleNode = sampleNode;
 
   } else {  // Need to get newSampleNode from the catalog
@@ -1639,12 +1639,12 @@ void Document::updateVariable(VariableItem * varItem,
 
     QString siBName = sensorItem->getBaseName();
 
-    if(!_project->getSensorCatalog()) 
+    if(!_project->getSensorCatalog())
        throw InternalProcessingException(
                  "Document::updateVariable - can't find sensor catalog!");
 
     map<string,xercesc::DOMElement*>::const_iterator mi;
-    const map<std::string,xercesc::DOMElement*>& scMap = 
+    const map<std::string,xercesc::DOMElement*>& scMap =
                                     _project->getSensorCatalog()->getMap();
 
     // Find the sensor in the sensor catalog
@@ -1653,7 +1653,7 @@ void Document::updateVariable(VariableItem * varItem,
         cerr << "  found sensor node in catalog\n";
 
         // find Sample node in the sensor node from the catalog
-        DOMNodeList * sampleNodes = mi->second->getChildNodes(); 
+        DOMNodeList * sampleNodes = mi->second->getChildNodes();
         for (XMLSize_t i = 0; i < sampleNodes->getLength(); i++) {
           DOMNode * sensorChild = sampleNodes->item(i);
           if ( ((string)XMLStringConverter(sensorChild->getNodeName())).
@@ -1661,7 +1661,7 @@ void Document::updateVariable(VariableItem * varItem,
 
           XDOMElement xnode((DOMElement *)sampleNodes->item(i));
           const string& sSampleId = xnode.getAttributeValue("id");
-          // We need to interpret sample id as does sampletag - i.e. accounting 
+          // We need to interpret sample id as does sampletag - i.e. accounting
           // for octal and hexidecimal numbers
           istringstream ist(sSampleId);
           unsigned int val;
@@ -1728,10 +1728,10 @@ void Document::updateVariable(VariableItem * varItem,
   for (XMLSize_t i = 0; i < varChildNodes->getLength(); i++)
   {
     DOMNode * varChild = varChildNodes->item(i);
-    if (((string)XMLStringConverter(varChild->getNodeName())).find("poly") 
-        == string::npos && 
-        ((string)XMLStringConverter(varChild->getNodeName())).find("linear") 
-        == string::npos)   
+    if (((string)XMLStringConverter(varChild->getNodeName())).find("poly")
+        == string::npos &&
+        ((string)XMLStringConverter(varChild->getNodeName())).find("linear")
+        == string::npos)
       continue;
 
     cerr << "  Found a calibration node - setting up to remove it\n";
@@ -1748,11 +1748,11 @@ void Document::updateVariable(VariableItem * varItem,
 
   // Update values of variablenode in samplenode copy based on user input
   DOMElement * varElem = ((xercesc::DOMElement*) variableNode);
-  varElem->removeAttribute((const XMLCh*)XMLStringConverter("name")); 
-  varElem->setAttribute((const XMLCh*)XMLStringConverter("name"), 
+  varElem->removeAttribute((const XMLCh*)XMLStringConverter("name"));
+  varElem->setAttribute((const XMLCh*)XMLStringConverter("name"),
                         (const XMLCh*)XMLStringConverter(varName));
-  varElem->removeAttribute((const XMLCh*)XMLStringConverter("longname"));   
-  varElem->setAttribute((const XMLCh*)XMLStringConverter("longname"),   
+  varElem->removeAttribute((const XMLCh*)XMLStringConverter("longname"));
+  varElem->setAttribute((const XMLCh*)XMLStringConverter("longname"),
                         (const XMLCh*)XMLStringConverter(varLongName));
   varElem->removeAttribute((const XMLCh*)XMLStringConverter("units"));
   varElem->setAttribute((const XMLCh*)XMLStringConverter("units"),
@@ -1763,13 +1763,13 @@ void Document::updateVariable(VariableItem * varItem,
   if (cals.size() && useCalfile) {
     addCalibElem(cals, varUnits, sampleNode, varElem);
     cerr<<" added XML calibration info to variable copy\n";
-  } else if (useCalfile) {  
+  } else if (useCalfile) {
     Site* site = const_cast<Site *> (sensor->getSite());
     std::string siteName = site->getName();
-    addVarCalFileElem(varName + string(".dat"), varUnits, siteName, 
+    addVarCalFileElem(varName + string(".dat"), varUnits, siteName,
                       sampleNode, varElem);
     cerr<<" added calfile calibration info to variable copy\n";
-  } 
+  }
 
   // Check for SampleTag having problems with new XML
   SampleTag* origSampTag = varItem->getSampleTag();
@@ -1826,19 +1826,19 @@ void Document::updateVariable(VariableItem * varItem,
 
     // update Qt model
     // XXX returns bool
-  
+
   //model->appendChild(sensorItem);
 
   return;
 }
 
-void Document::addA2DVariable(const std::string & a2dVarNamePfx, 
+void Document::addA2DVariable(const std::string & a2dVarNamePfx,
                               const std::string & a2dVarNameSfx,
-                              const std::string & a2dVarLongName, 
-                              const std::string & a2dVarVolts, 
+                              const std::string & a2dVarLongName,
+                              const std::string & a2dVarVolts,
                               const std::string & a2dVarChannel,
-                              const std::string & a2dVarSR, 
-                              const std::string & a2dVarUnits, 
+                              const std::string & a2dVarSR,
+                              const std::string & a2dVarUnits,
                               vector <std::string> cals)
 {
 cerr<<"entering Document::addA2DVariable about to make call to _configWindow->getModel()"  <<"\n";
@@ -1860,8 +1860,8 @@ cerr << "got A2Dsensor item \n";
   vector<A2DVariableInfo*> varInfoList;
   vector<A2DVariableInfo*> varInfoList2;
 
-// 
-// Next we add the variable described above to the vector (inserting 
+//
+// Next we add the variable described above to the vector (inserting
 // ordered based on channel number)
   a2dvInfo = new A2DVariableInfo;
   a2dvInfo->a2dVarNamePfx = a2dVarNamePfx;
@@ -1872,7 +1872,7 @@ cerr << "got A2Dsensor item \n";
   a2dvInfo->a2dVarSR = a2dVarSR;
   a2dvInfo->a2dVarUnits = a2dVarUnits;
   a2dvInfo->cals = cals;
-  // Because of the way nidas stores a2dVarUnits at the end of the cals 
+  // Because of the way nidas stores a2dVarUnits at the end of the cals
   a2dvInfo->cals.push_back(a2dVarUnits);
   varInfoList.push_back(a2dvInfo);
 cerr << "put together struct for new variable and put it in the list\n";
@@ -1887,15 +1887,15 @@ cerr<<"Find existing A2D Variable Items (non-A2DTemp) and add them to list:\n";
       a2dvInfo = new A2DVariableInfo;
     } else {
       throw InternalProcessingException("Child of A2D Sensor is not A2D Variable.");
-    }   
-// If we've got an A2DTEMP variable we need to skip it 
+    }
+// If we've got an A2DTEMP variable we need to skip it
     if (a2dvItem->variableName().compare(0,7,"A2DTEMP") != 0) {
       a2dvInfo->a2dVarNamePfx = a2dvItem->getVarNamePfx();
       a2dvInfo->a2dVarNameSfx = a2dvItem->getVarNameSfx();
 cerr<<"  - A2DvItem pfx:"<<a2dvItem->getVarNamePfx();
 cerr<<"  sfx:"<<a2dvItem->getVarNameSfx()<<"\n";
       a2dvInfo->a2dVarLongName = a2dvItem->getLongName().toStdString();
-      if (a2dvItem->getGain() == 1 && a2dvItem->getBipolar() == 1) 
+      if (a2dvItem->getGain() == 1 && a2dvItem->getBipolar() == 1)
         a2dvInfo->a2dVarVolts = "-10 to 10 Volts";
       else if (a2dvItem->getGain() == 2 && a2dvItem->getBipolar() == 0)
         a2dvInfo->a2dVarVolts = "  0 to 10 Volts";
@@ -1907,26 +1907,26 @@ cerr<<"  sfx:"<<a2dvItem->getVarNameSfx()<<"\n";
         throw InternalProcessingException
                       ("Unsupported Gain and Bipolar Values");
       }
-      a2dvInfo->a2dVarChannel = static_cast<ostringstream*>(&(ostringstream() 
+      a2dvInfo->a2dVarChannel = static_cast<ostringstream*>(&(ostringstream()
                                     << a2dvItem->getA2DChannel()) )->str();
-      a2dvInfo->a2dVarSR = static_cast<ostringstream*>( &(ostringstream() << 
+      a2dvInfo->a2dVarSR = static_cast<ostringstream*>( &(ostringstream() <<
                                     (int) a2dvItem->getRate()) )->str();
       a2dvInfo->a2dVarUnits = a2dvItem->getUnits();
       a2dvInfo->cals = a2dvItem->getCalibrationInfo();
-     
+
 //
 //   If we put them into the vector ordered based solely on channel number
-//   then call the insertA2DVariable then they will be inserted into the DOM 
-//   first based on SR and second based on channel number 
+//   then call the insertA2DVariable then they will be inserted into the DOM
+//   first based on SR and second based on channel number
 //   Ah - but we really want a secondary sort on SR so that when a lower
-//   channel number is eliminated we don't have a reshuffling of SRs and 
+//   channel number is eliminated we don't have a reshuffling of SRs and
 //   by association sample numbers.
 
-      bool inserted = false;  
+      bool inserted = false;
       vector<A2DVariableInfo*>::iterator it;
 
       it = varInfoList.begin();
-      if (atoi(a2dvInfo->a2dVarChannel.c_str()) < 
+      if (atoi(a2dvInfo->a2dVarChannel.c_str()) <
           atoi((*it)->a2dVarChannel.c_str())) {
         varInfoList.insert(it, a2dvInfo);
         inserted = true;
@@ -1937,9 +1937,9 @@ cerr<<"  sfx:"<<a2dvItem->getVarNameSfx()<<"\n";
       }
       if (!inserted) {
         for (it = varInfoList.begin()+1; it < varInfoList.end(); it++) {
-          if (atoi(a2dvInfo->a2dVarChannel.c_str()) > 
+          if (atoi(a2dvInfo->a2dVarChannel.c_str()) >
               atoi((*(it-1))->a2dVarChannel.c_str()) &&
-              atoi(a2dvInfo->a2dVarChannel.c_str()) < 
+              atoi(a2dvInfo->a2dVarChannel.c_str()) <
               atoi((*it)->a2dVarChannel.c_str())) {
             varInfoList.insert(it, a2dvInfo);
             inserted = true;
@@ -1948,12 +1948,12 @@ cerr<<"  sfx:"<<a2dvItem->getVarNameSfx()<<"\n";
         }
       }
       if (!inserted) varInfoList.push_back(a2dvInfo);
-    
+
 //  Now remove the variable from the model
 //      sensorItem->removeChild(sensorItem->child(i));
 //  Now get the model index for this item and add it to the list to be removed
       qmIdxList.push_back(a2dvItem->createIndex());
-      
+
     } // else we skip the A2D Temperature variable
   }
 
@@ -1988,7 +1988,7 @@ cerr<<"  sfx:"<<a2dvItem->getVarNameSfx()<<"\n";
     if (!inserted) varInfoList2.push_back(varInfoList[i]);
   }
 
-// Now remove all of the indexes which should eliminate all aspects of the 
+// Now remove all of the indexes which should eliminate all aspects of the
 // model data for each A2DVariable we've collected together.
   model->removeIndexes(qmIdxList);
 
@@ -2004,19 +2004,19 @@ cerr<<"  sfx:"<<a2dvItem->getVarNameSfx()<<"\n";
   bool gotUnspEx = false;
   for (size_t ii = 0; ii < varInfoList2.size(); ii++) {
 
-    // cals last "value" may be a unit indication 
+    // cals last "value" may be a unit indication
     //    - if so, change it to null string
     if (varInfoList2[ii]->cals.size()) {
       if (!isNum(varInfoList2[ii]->cals[varInfoList2[ii]->cals.size()-1])) {
-        varInfoList2[ii]->a2dVarUnits = 
+        varInfoList2[ii]->a2dVarUnits =
                        varInfoList2[ii]->cals[varInfoList2[ii]->cals.size()-1];
         varInfoList2[ii]->cals[varInfoList2[ii]->cals.size()-1] = "";
       }
     }
 
-    try { 
-      insertA2DVariable(model, sensorItem, sensorNode, analogSensor, 
-                      varInfoList2[ii]->a2dVarNamePfx, 
+    try {
+      insertA2DVariable(model, sensorItem, sensorNode, analogSensor,
+                      varInfoList2[ii]->a2dVarNamePfx,
                       varInfoList2[ii]->a2dVarNameSfx,
                       varInfoList2[ii]->a2dVarLongName,
                       varInfoList2[ii]->a2dVarVolts,
@@ -2073,7 +2073,7 @@ for (size_t i=0; i<cals.size(); i++) std::cerr<<cals[i];
 std::cerr<<"\n";
 
 // Find or create the SampleTag that will house this variable
-  SampleTag *sampleTag2Add2=0; 
+  SampleTag *sampleTag2Add2=0;
   unsigned int iSampRate;
   if (a2dVarSR.length() > 0) {
     istringstream ist(a2dVarSR);
@@ -2083,17 +2083,17 @@ std::cerr<<"\n";
   }
   set<unsigned int> sampleIds;
 
-// We want a sampleTag with the same sample rate as requested, but if the 
+// We want a sampleTag with the same sample rate as requested, but if the
 // SampleTag found is A2D temperature, we don't want it.
   for (int i=0; i< sensorItem->childCount(); i++) {
-    A2DVariableItem* variableItem = 
+    A2DVariableItem* variableItem =
             dynamic_cast<A2DVariableItem*>(sensorItem->child(i));
     if (!variableItem)
       throw InternalProcessingException
             ("Found child of A2DSensorItem that's not an A2DVariableItem!");
     SampleTag* sampleTag = variableItem->getSampleTag();
     sampleIds.insert(sampleTag->getSampleId());
-    if (sampleTag->getRate() == iSampRate) 
+    if (sampleTag->getRate() == iSampRate)
       if  ( !sampleTag->getParameter("temperature")) sampleTag2Add2 = sampleTag;
   }
 
@@ -2135,7 +2135,7 @@ cerr << "\n";
       sampleTag2Add2->setDSMId(analogSensor->getDSMId());
       sampleTag2Add2->fromDOMElement((xercesc::DOMElement*)newSampleElem);
       analogSensor->addSampleTag(sampleTag2Add2);
- 
+
 //cerr << "after fromdom newSampleElem = " << newSampleElem << "\n";
 //cerr<<"added SampleTag to the Sensor\n";
 
@@ -2144,7 +2144,7 @@ cerr << "\n";
         sampleNode = sensorNode->appendChild(newSampleElem);
       } catch (DOMException &e) {
         analogSensor->removeSampleTag(sampleTag2Add2);  // keep nidas Project tree in sync with DOM
-        throw InternalProcessingException("add sample to dsm element: " + 
+        throw InternalProcessingException("add sample to dsm element: " +
                                       (std::string)XMLStringConverter(e.getMessage()));
       }
     }
@@ -2156,8 +2156,8 @@ cerr << "\n";
   }
 //cerr << "got sampleTag\n";
 
-//  Getting the sampleNode - if we created a newSampleElem above then we just 
-//  need to cast it as a DOMNode, but if not, we need to step through sample 
+//  Getting the sampleNode - if we created a newSampleElem above then we just
+//  need to cast it as a DOMNode, but if not, we need to step through sample
 //  nodes of this sensor until we find the one with the right ID
   if (!createdNewSamp)  {
     sampleNode = sensorItem->findSampleDOMNode(sampleTag2Add2->getSampleId());
@@ -2190,7 +2190,7 @@ cerr << "\n";
          analogSensor->removeSampleTag(sampleTag2Add2);  // keep nidas Project tree in sync with DOM
          sampleNode = sensorNode->removeChild(sampleNode);
      }
-     throw InternalProcessingException("a2dVar create new a2dVar element: " + 
+     throw InternalProcessingException("a2dVar create new a2dVar element: " +
                               (std::string)XMLStringConverter(e.getMessage()));
   }
 
@@ -2201,11 +2201,11 @@ cerr << "\n";
     a2dVarName.append("_");
     a2dVarName.append(a2dVarNameSfx);
   }
-  a2dVarElem->setAttribute((const XMLCh*)XMLStringConverter("name"), 
+  a2dVarElem->setAttribute((const XMLCh*)XMLStringConverter("name"),
                            (const XMLCh*)XMLStringConverter(a2dVarName));
-  a2dVarElem->setAttribute((const XMLCh*)XMLStringConverter("longname"), 
+  a2dVarElem->setAttribute((const XMLCh*)XMLStringConverter("longname"),
                            (const XMLCh*)XMLStringConverter(a2dVarLongName));
-  a2dVarElem->setAttribute((const XMLCh*)XMLStringConverter("units"), 
+  a2dVarElem->setAttribute((const XMLCh*)XMLStringConverter("units"),
                            (const XMLCh*)XMLStringConverter("V"));
 
   // Now we need parameters for channel, gain and bipolar
@@ -2228,11 +2228,11 @@ cerr << "\n";
      throw InternalProcessingException("a2dVar create new channel element: " +
                              (std::string)XMLStringConverter(e.getMessage()));
   }
-  chanParmElem->setAttribute((const XMLCh*)XMLStringConverter("name"), 
+  chanParmElem->setAttribute((const XMLCh*)XMLStringConverter("name"),
                            (const XMLCh*)XMLStringConverter("channel"));
   chanParmElem->setAttribute((const XMLCh*)XMLStringConverter("type"),
                            (const XMLCh*)XMLStringConverter("int"));
-  chanParmElem->setAttribute((const XMLCh*)XMLStringConverter("value"), 
+  chanParmElem->setAttribute((const XMLCh*)XMLStringConverter("value"),
                            (const XMLCh*)XMLStringConverter(a2dVarChannel));
 
   // create new DOM elements for the gain and bipolar parameters
@@ -2306,7 +2306,7 @@ cerr<<"a2dVarVolts = " << a2dVarVolts <<"\n";
   } else {
      if (createdNewSamp)  {
          // keep nidas Project tree in sync with DOM
-         analogSensor->removeSampleTag(sampleTag2Add2);  
+         analogSensor->removeSampleTag(sampleTag2Add2);
          sampleNode = sensorNode->removeChild(sampleNode);
      }
      throw InternalProcessingException
@@ -2324,7 +2324,7 @@ cerr<<"a2dVarVolts = " << a2dVarVolts <<"\n";
     cals.erase(cals.begin());
     addCalibElem(cals, a2dVarUnits, sampleNode, a2dVarElem);
   } else {
-    // If it's not XML defined try to find a specific Calibration file for 
+    // If it's not XML defined try to find a specific Calibration file for
     // this Variable
     Site* site = const_cast<Site *> (analogSensor->getSite());
     std::string siteName = site->getName();
@@ -2339,13 +2339,13 @@ cerr<<"a2dVarVolts = " << a2dVarVolts <<"\n";
       if (!foundCalFile) {
         if ((*qit) == varFileName) {
           foundCalFile = true;
-          addVarCalFileElem(a2dVarName + string(".dat"), a2dVarUnits, 
+          addVarCalFileElem(a2dVarName + string(".dat"), a2dVarUnits,
                             siteName, sampleNode, a2dVarElem);
 cerr<<"Found engineering cal file: "<<a2dVarName<<".dat\n";
         }
         if (*qit == varPfxFileName && !foundCalFile) {
           foundCalFile = true;
-          addVarCalFileElem(a2dVarNamePfx + string(".dat"), a2dVarUnits, 
+          addVarCalFileElem(a2dVarNamePfx + string(".dat"), a2dVarUnits,
                             siteName, sampleNode, a2dVarElem);
 cerr<<"Found engineering cal file: "<<a2dVarNamePfx<<".dat\n";
         }
@@ -2354,7 +2354,7 @@ cerr<<"Found engineering cal file: "<<a2dVarNamePfx<<".dat\n";
     if (!foundCalFile) {
       addMissingEngCalFile(QString::fromStdString(a2dVarName));
 cerr<<"Found neither "<<varPfxFileName.toStdString()<<" nor "<<varFileName.toStdString()<<" in Cal Dir\n";
-      addVarCalFileElem(a2dVarName + string(".dat"), a2dVarUnits, siteName, 
+      addVarCalFileElem(a2dVarName + string(".dat"), a2dVarUnits, siteName,
                             sampleNode, a2dVarElem);
     }
   }
@@ -2372,12 +2372,12 @@ cerr << "Calling fromDOM \n";
         delete a2dVar;
         if (createdNewSamp)  {
             // keep nidas Project tree in sync with DOM
-            analogSensor->removeSampleTag(sampleTag2Add2); 
+            analogSensor->removeSampleTag(sampleTag2Add2);
             sampleNode = sensorNode->removeChild(sampleNode);
         }
         throw(e);
     }
-//cerr << "setting a2d Channel for new variable to value" 
+//cerr << "setting a2d Channel for new variable to value"
 //     << a2dVarChannel.c_str() << "\n";
     a2dVar->setA2dChannel(atoi(a2dVarChannel.c_str()));
 
@@ -2392,11 +2392,11 @@ cerr << "Calling fromDOM \n";
   } catch (nidas::util::InvalidParameterException &e) {
     cerr << "Caught invalidparameter exception\n";
     // validation failed so get it out of nidas Project tree
-    sampleTag2Add2->removeVariable(a2dVar); 
+    sampleTag2Add2->removeVariable(a2dVar);
     if (createdNewSamp)  {
         // keep nidas Project tree in sync with DOM
-        analogSensor->removeSampleTag(sampleTag2Add2);  
-        try { 
+        analogSensor->removeSampleTag(sampleTag2Add2);
+        try {
           sampleNode = sensorNode->removeChild(sampleNode);
         }
         catch (xercesc::DOMException &e){
@@ -2408,9 +2408,9 @@ cerr << "Calling fromDOM \n";
     throw(e); // notify GUI
   } catch ( ... ) {
     // validation failed so get it out of nidas Project tree and DOM tree
-    sampleTag2Add2->removeVariable(a2dVar); 
+    sampleTag2Add2->removeVariable(a2dVar);
     if (createdNewSamp)  {
-        analogSensor->removeSampleTag(sampleTag2Add2);  
+        analogSensor->removeSampleTag(sampleTag2Add2);
         sampleNode = sensorNode->removeChild(sampleNode);
     }
     //delete a2dVar;
@@ -2424,12 +2424,12 @@ cerr << "Calling fromDOM \n";
   } catch (DOMException &e) {
      // validation failed so get it out of nidas Project tree and DOM tree
      sampleNode->removeChild(a2dVarElem);
-     sampleTag2Add2->removeVariable(a2dVar); 
+     sampleTag2Add2->removeVariable(a2dVar);
      if (createdNewSamp)  {
-         analogSensor->removeSampleTag(sampleTag2Add2);  
+         analogSensor->removeSampleTag(sampleTag2Add2);
          sampleNode = sensorNode->removeChild(sampleNode);
      }
-     throw InternalProcessingException("add a2dVar to dsm element: " + 
+     throw InternalProcessingException("add a2dVar to dsm element: " +
                      (std::string)XMLStringConverter(e.getMessage()));
   }
 
@@ -2442,8 +2442,8 @@ cerr<<"added a2dVar node to the DOM\n";
 //   printSiteNames();
 }
 
-void Document::addCalibElem(std::vector <std::string> cals, 
-                            const std::string & VarUnits, 
+void Document::addCalibElem(std::vector <std::string> cals,
+                            const std::string & VarUnits,
                             xercesc::DOMNode *sampleNode,
                             xercesc::DOMElement *varElem)
 {
@@ -2452,7 +2452,7 @@ void Document::addCalibElem(std::vector <std::string> cals,
     const XMLCh * polyTagName = 0;
     XMLStringConverter xmlPoly("poly");
     polyTagName = (const XMLCh *) xmlPoly;
-  
+
     // create a new DOM element for the poly node
     xercesc::DOMElement* polyElem = 0;
     try {
@@ -2470,7 +2470,7 @@ void Document::addCalibElem(std::vector <std::string> cals,
     for (size_t i = 1; i < cals.size(); i++)
       if (cals[i].size()) polyStr += (" " + cals[i]);
 
-    polyElem->setAttribute((const XMLCh*)XMLStringConverter("units"), 
+    polyElem->setAttribute((const XMLCh*)XMLStringConverter("units"),
                              (const XMLCh*)XMLStringConverter(VarUnits));
     polyElem->setAttribute((const XMLCh*)XMLStringConverter("coefs"),
                              (const XMLCh*)XMLStringConverter(polyStr));
@@ -2503,12 +2503,12 @@ void Document::addCalibElem(std::vector <std::string> cals,
     linearElem->setAttribute((const XMLCh*)XMLStringConverter("slope"),
                              (const XMLCh*)XMLStringConverter(cals[1]));
 
-    varElem->appendChild(linearElem); 
+    varElem->appendChild(linearElem);
   }
 } // add CalibElem
 
 void Document::addVarCalFileElem(std::string varCalFileName,
-                              const std::string & varUnits, 
+                              const std::string & varUnits,
                               const std::string & siteName,
                               xercesc::DOMNode *sampleNode,
                               xercesc::DOMElement *varElem)
@@ -2539,7 +2539,7 @@ cerr<<"\nIn addVarCalFile:\n";
   //for (size_t i = 1; i < cals.size(); i++)
     //if (cals[i].size()) polyStr += (" " + cals[i]);
 
-  polyElem->setAttribute((const XMLCh*)XMLStringConverter("units"), 
+  polyElem->setAttribute((const XMLCh*)XMLStringConverter("units"),
                            (const XMLCh*)XMLStringConverter(varUnits));
 
   // We need a calfile node
@@ -2555,7 +2555,7 @@ cerr<<"\nIn addVarCalFile:\n";
          calfileTagName);
   } catch (DOMException &e) {
      cerr << "dsmNode->getOwnerDocument()->createElementNS() threw exception\n";
-     throw InternalProcessingException("dsm create new dsm sample element: " 
+     throw InternalProcessingException("dsm create new dsm sample element: "
                              + (std::string)XMLStringConverter(e.getMessage()));
   }
 
@@ -2565,9 +2565,9 @@ cerr<<"\nIn addVarCalFile:\n";
   std::string engCalDir = "${PROJ_DIR}/Configuration/cal_files/Engineering/";
   engCalDir.append(siteName);
   std::string engCalPath = tmpCalDir + ":" + engCalDir;
-  calfileElem->setAttribute((const XMLCh*)XMLStringConverter("path"), 
+  calfileElem->setAttribute((const XMLCh*)XMLStringConverter("path"),
                            (const XMLCh*)XMLStringConverter (engCalPath));
-  calfileElem->setAttribute((const XMLCh*)XMLStringConverter("file"), 
+  calfileElem->setAttribute((const XMLCh*)XMLStringConverter("file"),
                            (const XMLCh*)XMLStringConverter(varCalFileName));
 
   polyElem->appendChild(calfileElem);

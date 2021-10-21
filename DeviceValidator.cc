@@ -120,8 +120,8 @@ DeviceValidator::_DeviceDefinitionStruct DeviceValidator::_Definitions[] = {
 
 DeviceValidator * DeviceValidator::_instance = NULL;
 
-DeviceValidator::DeviceValidator() //: 
-       //_devMap(_Definitions, _Definitions + sizeof(_Definitions) / sizeof(_DeviceDefinition)) 
+DeviceValidator::DeviceValidator() //:
+       //_devMap(_Definitions, _Definitions + sizeof(_Definitions) / sizeof(_DeviceDefinition))
 {
 
   int n =  sizeof(_Definitions) / sizeof(_DeviceDefinition);

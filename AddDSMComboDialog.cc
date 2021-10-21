@@ -36,7 +36,7 @@ QRegExp _dsmNameRegEx("[a-zA-Z/_0-9.\\-+]+");   // chars, ints and a few symbls
 QRegExp _dsmIdRegEx("\\d\\d?");                 // One or two digit integer
 QRegExp _dsmLocRegEx("\\S[\\S\\s]+");           // At least one character
 
-AddDSMComboDialog::AddDSMComboDialog(QWidget *parent): 
+AddDSMComboDialog::AddDSMComboDialog(QWidget *parent):
     QDialog(parent)
 {
   setupUi(this);
@@ -109,9 +109,9 @@ void AddDSMComboDialog::accept()
     _errorMessage->setText(msg);
     _errorMessage->exec();
     return; // do not accept, keep dialog up for further editing
-  } catch (...) { 
-    _errorMessage->setText("Caught Unspecified error"); 
-    _errorMessage->exec(); 
+  } catch (...) {
+    _errorMessage->setText("Caught Unspecified error");
+    _errorMessage->exec();
   }
 
   QDialog::accept(); // accept (or bail out) and make the dialog disappear
@@ -221,11 +221,11 @@ return true;
 
 void AddDSMComboDialog::existingDSM(DSMItem *dsmItem)
 {
-  // Fill in fields 
+  // Fill in fields
   DSMConfig *dsm = dsmItem->getDSMConfig();
   DSMNameText->insert(QString::fromStdString(dsm->getName()));
   DSMIdText->insert(QString::number(dsm->getId()));
   LocationText->insert(QString::fromStdString(dsm->getLocation()));
- 
+
   return;
 }

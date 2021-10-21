@@ -31,7 +31,7 @@ using namespace config;
 
 QRegExp _projNameRegEx("[A-Z0-9\\-]*");
 
-NewProjectDialog::NewProjectDialog(QString projDir, QWidget *parent): 
+NewProjectDialog::NewProjectDialog(QString projDir, QWidget *parent):
     QDialog(parent)
 {
   setupUi(this);
@@ -53,7 +53,7 @@ void NewProjectDialog::accept()
   if (ProjName->hasAcceptableInput()) {
     std::cerr << "NewProjectDialog::accept()\n";
     std::cerr << " ProjName: " + ProjName->text().toStdString() + "<EOS>\n";
-    std::cerr << " Platform: " + 
+    std::cerr << " Platform: " +
 	PlatformComboBox->currentText().toStdString() + "<EOS>\n";
 
     // We need a platform string

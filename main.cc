@@ -25,8 +25,8 @@
 */
 /*
 
-    An Qt based application that allows visualization of a nidas/nimbus 
-    configuration (e.g. default.xml) file. 
+    An Qt based application that allows visualization of a nidas/nimbus
+    configuration (e.g. default.xml) file.
 */
 
 #include <QApplication>

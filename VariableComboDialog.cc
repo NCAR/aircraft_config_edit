@@ -37,7 +37,7 @@ QRegExp _calibRegEx("^-?\\d*.?\\d*");
 QRegExp _varnameRegEx("^[A-Z|0-9|_]*$");
 QRegExp _varunitRegEx("^\\S*$");
 
-VariableComboDialog::VariableComboDialog(QWidget *parent): 
+VariableComboDialog::VariableComboDialog(QWidget *parent):
     QDialog(parent)
 {
   setupUi(this);
@@ -63,7 +63,7 @@ void VariableComboDialog::accept()
 
   // Should only be called in edit mode (non a2d variables come from sensor
   //  catalog - i.e. cannot create new ones.)
-  if (_indexList.size() <= 0)  
+  if (_indexList.size() <= 0)
     throw InternalProcessingException("Don't have a variable we're editing - should not happen");
 
   if (VariableText->hasAcceptableInput() && UnitsText->hasAcceptableInput()) {
@@ -76,30 +76,30 @@ void VariableComboDialog::accept()
     }
 
     // Now we need to validate that calibrations entered make sense
-    if (Calib6Text->text().size()) 
+    if (Calib6Text->text().size())
       if (!Calib5Text->text().size() || !Calib4Text->text().size() ||
           !Calib3Text->text().size() || !Calib2Text->text().size() ||
-          !Calib1Text->text().size()) 
+          !Calib1Text->text().size())
       {
         _errorMessage->setText(QString::fromStdString("6th Order calibration needs values for 5th thru 1st orders"));
         _errorMessage->exec();
         return;
       }
-    if (Calib5Text->text().size()) 
-      if (!Calib4Text->text().size() || !Calib3Text->text().size() || 
+    if (Calib5Text->text().size())
+      if (!Calib4Text->text().size() || !Calib3Text->text().size() ||
           !Calib2Text->text().size() || !Calib1Text->text().size()) {
         _errorMessage->setText(QString::fromStdString("5th Order calibration needs values for 4th thru 1st orders"));
         _errorMessage->exec();
         return;
       }
-    if (Calib4Text->text().size()) 
-      if (!Calib3Text->text().size() || !Calib2Text->text().size() || 
+    if (Calib4Text->text().size())
+      if (!Calib3Text->text().size() || !Calib2Text->text().size() ||
           !Calib1Text->text().size()) {
         _errorMessage->setText(QString::fromStdString("4th Order calibration needs values for 3th thru 1st orders"));
         _errorMessage->exec();
         return;
       }
-    if (Calib3Text->text().size()) 
+    if (Calib3Text->text().size())
       if (!Calib2Text->text().size() || !Calib1Text->text().size()) {
         _errorMessage->setText(QString::fromStdString("3th Order calibration needs values for 2nd and 1st orders"));
         _errorMessage->exec();
@@ -115,7 +115,7 @@ void VariableComboDialog::accept()
 
    bool useCalfile = false;
    if (calFileCheckBox->checkState() == Qt::Checked) useCalfile=true;
-    
+
    std::cerr << " Name: " << VariableText->text().toStdString() << "\n";
    std::cerr << " Long Name: " << LongNameText->text().toStdString() << "\n";
    std::cerr << " Sample Rate: " << SRText->text().toStdString() << "\n";
@@ -124,11 +124,11 @@ void VariableComboDialog::accept()
    if (useCalfile) uCf = "Yes";
    std::cerr << " UseCalFile: " + uCf + "\n";
    if (_xmlCals) {
-      std::cerr << " XML Cals: " << Calib1Text->text().toStdString() 
-                                 << Calib2Text->text().toStdString() 
-                                 << Calib3Text->text().toStdString() 
-                                 << Calib4Text->text().toStdString() 
-                                 << Calib5Text->text().toStdString() 
+      std::cerr << " XML Cals: " << Calib1Text->text().toStdString()
+                                 << Calib2Text->text().toStdString()
+                                 << Calib3Text->text().toStdString()
+                                 << Calib4Text->text().toStdString()
+                                 << Calib5Text->text().toStdString()
                                  << Calib6Text->text().toStdString() << "\n";
    }
 
@@ -174,13 +174,13 @@ void VariableComboDialog::accept()
                               ("Bad internal error. Get help! " + e.toString()));
         _errorMessage->exec();
      } catch ( nidas::util::InvalidParameterException &e) {
-        _errorMessage->setText(QString::fromStdString("Invalid parameter: " + 
+        _errorMessage->setText(QString::fromStdString("Invalid parameter: " +
                                e.toString()));
         _errorMessage->exec();
         return; // do not accept, keep dialog up for further editing
-     } catch (...) { 
-       _errorMessage->setText("Caught Unspecified error"); 
-       _errorMessage->exec(); 
+     } catch (...) {
+       _errorMessage->setText("Caught Unspecified error");
+       _errorMessage->exec();
      }
 
      QDialog::accept(); // accept (or bail out) and make the dialog disappear
@@ -193,7 +193,7 @@ void VariableComboDialog::accept()
 
 }
 
-void VariableComboDialog::show(NidasModel* model, 
+void VariableComboDialog::show(NidasModel* model,
                                      QModelIndexList indexList)
 {
   VariableText->clear();
@@ -213,10 +213,10 @@ void VariableComboDialog::show(NidasModel* model,
   _indexList = indexList;
 
   // Interface is that if indexList is null then we are in "add" modality and
-  // if it is not, then it contains the index to the VariableItem we are 
+  // if it is not, then it contains the index to the VariableItem we are
   // editing.
   NidasItem *item = NULL;
-  if (indexList.size() <= 0)  
+  if (indexList.size() <= 0)
     throw InternalProcessingException("Don't have a variable we're editing - should not happen");
   for (int i=0; i<indexList.size(); i++) {
     QModelIndex index = indexList[i];
@@ -257,14 +257,14 @@ cerr<<"  Get Rate returns: " << rate << "\n";
     std::vector<std::string> calInfo = _varItem->getCalibrationInfo();
 
     std::cerr<<__func__<<" Members of calInfo vector are:\n";
-      for (std::vector<std::string>::iterator it = calInfo.begin(); 
+      for (std::vector<std::string>::iterator it = calInfo.begin();
             it != calInfo.end(); it++) {
         std::cerr<<*it<<" ";
       }
     std::cerr<<"\n";
-  
+
     if (calInfo.size() > 0) {
-        if (calInfo.size() == 1 || 
+        if (calInfo.size() == 1 ||
            (calInfo.size() == 2 && calInfo[0] == "ERROR")) {
           Calib1Text->setText(QString("0"));
           Calib2Text->setText(QString("1"));

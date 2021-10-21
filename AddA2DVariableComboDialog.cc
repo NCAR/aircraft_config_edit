@@ -44,7 +44,7 @@ QRegExp _nameRegEx("^[A-Z|0-9|_]*$");
 QRegExp _unitRegEx("^\\S*$");
 //QRegExp _nameRegEx("^\\S+$");
 
-AddA2DVariableComboDialog::AddA2DVariableComboDialog(QWidget *parent): 
+AddA2DVariableComboDialog::AddA2DVariableComboDialog(QWidget *parent):
     QDialog(parent)
 {
    setupUi(this);
@@ -78,7 +78,7 @@ void AddA2DVariableComboDialog::accept()
 {
    bool editMode = false;
    if (_indexList.size() > 0)  editMode = true;
-   
+
    //checkUnitsAndCalCoefs();
 
    // Don't allow variables to start with a numeric value
@@ -110,26 +110,26 @@ void AddA2DVariableComboDialog::accept()
       SuffixText->clear();
       SuffixText->insert(suffixText);
    }
-       
+
    std::cerr << " Name: " + VariableBox->currentText().toStdString() + "\n";
    std::cerr << " Sfx : " + SuffixText->text().toStdString() + "\n";
    std::cerr << " Long Name: " + LongNameText->text().toStdString() + "\n";
-   std::cerr << "Volt Range Index: " << VoltageBox->currentIndex() << 
+   std::cerr << "Volt Range Index: " << VoltageBox->currentIndex() <<
                 " Val: " + VoltageBox->currentText().toStdString() +  "\n";
    std::cerr << " Channel Index: " << ChannelBox->currentIndex() <<
                 " Val: " + ChannelBox->currentText().toStdString() + "\n";
    std::cerr << " SR Box Index: " << SRBox->currentIndex() <<
                 " Val: " + SRBox->currentText().toStdString() + "\n";
    std::cerr << " Units: " + UnitsText->text().toStdString() + "\n";
-   std::cerr << " Cals: " + Calib1Text->text().toStdString() + 
+   std::cerr << " Cals: " + Calib1Text->text().toStdString() +
                   Calib2Text->text().toStdString() +
-                  Calib3Text->text().toStdString() + 
+                  Calib3Text->text().toStdString() +
                   Calib4Text->text().toStdString() +
-                  Calib5Text->text().toStdString() + 
+                  Calib5Text->text().toStdString() +
                   Calib6Text->text().toStdString() + "\n";
 
    try {
-      // If we're in edit mode, we need to delete the A2DVariableItem 
+      // If we're in edit mode, we need to delete the A2DVariableItem
       // from the model first and then we can add it back in.
       if (editMode)  {
          if(SRBox->currentIndex() !=_origSRBoxIndex) {
@@ -139,7 +139,7 @@ void AddA2DVariableComboDialog::accept()
             QMessageBox * _errorMessage = new QMessageBox(this);
             _errorMessage->setText(msg);
             _errorMessage->setInformativeText("Do you want to continue?");
-            _errorMessage->setStandardButtons(QMessageBox::Apply | 
+            _errorMessage->setStandardButtons(QMessageBox::Apply |
                                               QMessageBox::Cancel);
             int ret = _errorMessage->exec();
             switch (ret) {
@@ -157,7 +157,7 @@ void AddA2DVariableComboDialog::accept()
          }
          _model->removeIndexes(_indexList);
       }
-     
+
       vector <std::string> cals;
       cals.push_back(Calib1Text->text().toStdString());
       cals.push_back(Calib2Text->text().toStdString());
@@ -166,7 +166,7 @@ void AddA2DVariableComboDialog::accept()
       cals.push_back(Calib5Text->text().toStdString());
       cals.push_back(Calib6Text->text().toStdString());
       if (_document) {
-         _document->addA2DVariable(VariableBox->currentText().toStdString(), 
+         _document->addA2DVariable(VariableBox->currentText().toStdString(),
                                     SuffixText->text().toStdString(),
                                     LongNameText->text().toStdString(),
                                     VoltageBox->currentText().toStdString(),
@@ -184,21 +184,21 @@ void AddA2DVariableComboDialog::accept()
       _errorMessage->exec();
    } catch ( nidas::util::InvalidParameterException &e) {
       QMessageBox * _errorMessage = new QMessageBox(this);
-      _errorMessage->setText(QString::fromStdString("Invalid parameter: " + 
+      _errorMessage->setText(QString::fromStdString("Invalid parameter: " +
                                e.toString()));
       _errorMessage->exec();
        return; // do not accept, keep dialog up for further editing
-   } catch (...) { 
+   } catch (...) {
       QMessageBox * _errorMessage = new QMessageBox(this);
-      _errorMessage->setText("Caught Unspecified error"); 
-      _errorMessage->exec(); 
+      _errorMessage->setText("Caught Unspecified error");
+      _errorMessage->exec();
    }
 
    QDialog::accept(); // accept (or bail out) and make the dialog disappear
 
 }
 
-void AddA2DVariableComboDialog::show(NidasModel* model, 
+void AddA2DVariableComboDialog::show(NidasModel* model,
                                      QModelIndexList indexList)
 {
   clearForm();
@@ -208,7 +208,7 @@ void AddA2DVariableComboDialog::show(NidasModel* model,
   _origSRBoxIndex = -1;
 
   // Interface is that if indexList is null then we are in "add" modality and
-  // if it is not, then it contains the index to the A2DVariableItem we are 
+  // if it is not, then it contains the index to the A2DVariableItem we are
   // editing.
   NidasItem *item = NULL;
   if (indexList.size() > 0)  {
@@ -229,9 +229,9 @@ std::cerr<< "A2DVariableDialog called in edit mode\n";
       throw InternalProcessingException("Selection is not an A2DVariable.");
 
     // TODO:
-    // if (removeSuffix(a2dVarItem->name()) == "A2DTEMP") 
+    // if (removeSuffix(a2dVarItem->name()) == "A2DTEMP")
     //    Need to set up the form for Suffix edit only
-    
+
     int index = VariableBox->findText(removeSuffix(a2dVarItem->name()));
     if (index == -1) {
       QMessageBox * errorMessage = new QMessageBox(this);
@@ -292,7 +292,7 @@ std::cerr<<*it<<" ";
 }
 std::cerr<<"\n";
     if (calInfo.size() > 0) {
-      if (calInfo.size() == 1 
+      if (calInfo.size() == 1
           && calInfo[0] == std::string("No Calibrations Found")) {
         CalLabel->setText(QString("No Calibrations Found"));
         Calib1Text->setText(QString("0"));
@@ -337,7 +337,7 @@ std::cerr<<"\n";
         Calib2Text->setText(QString("1"));
     }
 
-    // Since change of index will trigger dialogSetup we need to 
+    // Since change of index will trigger dialogSetup we need to
     // do this step last
     if (index != -1) VariableBox->setCurrentIndex(index);
     VariableBox->setEnabled(false);
@@ -418,23 +418,23 @@ void AddA2DVariableComboDialog::dialogSetup(const QString & variable)
     cerr<<"    - VarDB.xml lookup vLow:"<<vLow<<"  vHigh:"<<vHigh<<"  addmode:"<<_addMode<<"\n";
 
     if (vLow == 0 && vHigh == 5) {
-        if(!_addMode && VoltageBox->currentIndex() != 0) 
+        if(!_addMode && VoltageBox->currentIndex() != 0)
             showVoltErr(vLow, vHigh, VoltageBox->currentIndex());
         VoltageBox->setCurrentIndex(0);
     }
     else if (vLow == 0 && vHigh == 10) {
-        if(!_addMode && VoltageBox->currentIndex() != 1) 
+        if(!_addMode && VoltageBox->currentIndex() != 1)
             showVoltErr(vLow, vHigh, VoltageBox->currentIndex());
         VoltageBox->setCurrentIndex(1);
     }
-    else if (vLow == -5 && vHigh == 5) 
+    else if (vLow == -5 && vHigh == 5)
     {
-        if(!_addMode && VoltageBox->currentIndex() != 2) 
+        if(!_addMode && VoltageBox->currentIndex() != 2)
             showVoltErr(vLow, vHigh, VoltageBox->currentIndex());
         VoltageBox->setCurrentIndex(2);
     }
     else if (vLow == -10 && vHigh == 10) {
-        if(!_addMode && VoltageBox->currentIndex() != 3) 
+        if(!_addMode && VoltageBox->currentIndex() != 3)
             showVoltErr(vLow, vHigh, VoltageBox->currentIndex());
         VoltageBox->setCurrentIndex(3);
     }
@@ -449,12 +449,12 @@ void AddA2DVariableComboDialog::dialogSetup(const QString & variable)
         _errorMessage->setText(msg);
         _errorMessage->exec();
         VoltageBox->setCurrentIndex(0);
-    } 
-   
+    }
+
     int32_t sRate=atoi(vdbVar->get_attribute(VDBVar::DEFAULT_SAMPLE_RATE).c_str());
 cerr<<"    - VarDB.xml lookup sRate:"<<sRate<<"\n";
     switch (sRate) {
-        case 10 : 
+        case 10 :
            if (!_addMode && SRBox->currentIndex() != 0) {
                showSRErr(sRate, SRBox->currentIndex());
            }
@@ -490,8 +490,8 @@ cerr<<"    -VarDB.xml lookup Units:"<<vDBUnits.toStdString()<<"\n";
     if (!_addMode && UnitsText->text() != vDBUnits) {
         //QMessageBox * _errorMessage = new QMessageBox(this);
         QString msg("VarDB/Configuration missmatch: \n");
-        msg.append("   VarDB Units: "); msg.append(vDBUnits); 
-        msg.append("\n"); msg.append("   Config has : "); 
+        msg.append("   VarDB Units: "); msg.append(vDBUnits);
+        msg.append("\n"); msg.append("   Config has : ");
         msg.append(UnitsText->text());
         msg.append("\n   Using Config value.");
         _errorMessage->setText(msg);
@@ -535,7 +535,7 @@ void AddA2DVariableComboDialog::showSRErr(int vDBsr, int srIndx)
     msg.append("   VarDB Sample Rate  = "); msg.append(QString::number(vDBsr));
     msg.append("\n   Config Sample Rate = ");
     switch (srIndx) {
-        case 0: 
+        case 0:
             msg.append("10\n");
             break;
         case 1:
@@ -555,8 +555,8 @@ void AddA2DVariableComboDialog::showSRErr(int vDBsr, int srIndx)
     return;
 }
 
-void AddA2DVariableComboDialog::showVoltErr(int32_t vDBvLow, int32_t vDBvHi, 
-                                           int confIndx) 
+void AddA2DVariableComboDialog::showVoltErr(int32_t vDBvLow, int32_t vDBvHi,
+                                           int confIndx)
 {
     QString confRange;
     switch (confIndx) {
@@ -566,7 +566,7 @@ void AddA2DVariableComboDialog::showVoltErr(int32_t vDBvLow, int32_t vDBvHi,
             confRange.append("0 - 10 Volts"); break;
         case 2:
             confRange.append("-5 - 5 Volts"); break;
-        case 3: 
+        case 3:
             confRange.append("-10 - 10 Volts"); break;
         default:
             // should never happen
@@ -709,7 +709,7 @@ void AddA2DVariableComboDialog::buildA2DVarDB()
         }
     }
 
-   connect(VariableBox, SIGNAL(currentIndexChanged(const QString &)), this, 
+   connect(VariableBox, SIGNAL(currentIndexChanged(const QString &)), this,
               SLOT(dialogSetup(const QString &)));
 
     return;
