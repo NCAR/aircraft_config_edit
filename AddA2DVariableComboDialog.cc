@@ -23,6 +23,12 @@
  **
  ********************************************************************
 */
+/*
+ * This file is part of configedit:
+ * A Qt based application that allows visualization of a nidas/nimbus
+ * configuration (e.g. default.xml) file.
+ */
+
 #include "AddA2DVariableComboDialog.h"
 #include "configwindow.h"
 #include "exceptions/InternalProcessingException.h"
@@ -286,11 +292,13 @@ std::cerr<< "A2DVariableDialog called in edit mode\n";
 
     std::vector<std::string> calInfo = a2dVarItem->getCalibrationInfo();
 
-std::cerr<<__func__<<" Members of calInfo vector are:\n";
-for (std::vector<std::string>::iterator it = calInfo.begin(); it != calInfo.end(); it++) {
-std::cerr<<*it<<" ";
-}
-std::cerr<<"\n";
+    std::cerr<<__func__<<" Members of calInfo vector are:\n";
+    for (std::vector<std::string>::iterator it = calInfo.begin(); 
+         it != calInfo.end(); it++) {
+        std::cerr<<*it<<" ";
+    }
+    std::cerr<<"\n";
+
     if (calInfo.size() > 0) {
       if (calInfo.size() == 1
           && calInfo[0] == std::string("No Calibrations Found")) {
@@ -310,7 +318,7 @@ std::cerr<<"\n";
            CalLabel->setText(QString("Calibrations:XML"));
            calInfo.erase(calInfo.begin());
         } else if (calInfo[0] == std::string("CalFile:")) {
-//TODO: Not actually getting cals from the file for display
+           //TODO: Not actually getting cals from the file for display
            CalLabel->setText(QString("Calibrations:File"));
            calInfo.erase(calInfo.begin());
         } else
@@ -350,7 +358,7 @@ std::cerr<<"\n";
       VariableBox->setEnabled(true);
       VariableBox->setCurrentIndex(0);
       VariableBox->setEditable(true);
-std::cerr<< "A2DVariableDialog called in add mode\n";
+      std::cerr<< "A2DVariableDialog called in add mode\n";
   }
 
   SetUpChannelBox();
@@ -415,7 +423,8 @@ void AddA2DVariableComboDialog::dialogSetup(const QString & variable)
     QStringList vRangeList = vRange.split(" ");
     int32_t vLow = vRangeList.at(0).toInt();
     int32_t vHigh = vRangeList.at(1).toInt();
-    cerr<<"    - VarDB.xml lookup vLow:"<<vLow<<"  vHigh:"<<vHigh<<"  addmode:"<<_addMode<<"\n";
+    cerr << "    - VarDB.xml lookup vLow:" << vLow << "  vHigh:"
+         << vHigh << "  addmode:" << _addMode << "\n";
 
     if (vLow == 0 && vHigh == 5) {
         if(!_addMode && VoltageBox->currentIndex() != 0)
@@ -452,7 +461,7 @@ void AddA2DVariableComboDialog::dialogSetup(const QString & variable)
     }
 
     int32_t sRate=atoi(vdbVar->get_attribute(VDBVar::DEFAULT_SAMPLE_RATE).c_str());
-cerr<<"    - VarDB.xml lookup sRate:"<<sRate<<"\n";
+    cerr << "    - VarDB.xml lookup sRate:" << sRate << "\n";
     switch (sRate) {
         case 10 :
            if (!_addMode && SRBox->currentIndex() != 0) {
@@ -485,7 +494,7 @@ cerr<<"    - VarDB.xml lookup sRate:"<<sRate<<"\n";
 
 
     QString vDBUnits(vdbVar->get_attribute(VDBVar::UNITS).c_str());
-cerr<<"    -VarDB.xml lookup Units:"<<vDBUnits.toStdString()<<"\n";
+    cerr << "    -VarDB.xml lookup Units:" << vDBUnits.toStdString() << "\n";
 
     if (!_addMode && UnitsText->text() != vDBUnits) {
         //QMessageBox * _errorMessage = new QMessageBox(this);

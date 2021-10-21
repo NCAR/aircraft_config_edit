@@ -1,5 +1,10 @@
 # -*- python -*-
 ## 2011, Copyright University Corporation for Atmospheric Research
+#
+# configedit:
+#  A Qt based application that allows visualization of a nidas/nimbus
+#  configuration (e.g. default.xml) file.
+#
 
 import os
 import SCons

@@ -23,6 +23,13 @@
  **
  ********************************************************************
 */
+/*
+ * This file is part of configedit:
+ * A Qt based application that allows visualization of a nidas/nimbus
+ * configuration (e.g. default.xml) file.
+ */
+
+
 #include "VariableComboDialog.h"
 #include "configwindow.h"
 #include "exceptions/InternalProcessingException.h"
@@ -64,13 +71,15 @@ void VariableComboDialog::accept()
   // Should only be called in edit mode (non a2d variables come from sensor
   //  catalog - i.e. cannot create new ones.)
   if (_indexList.size() <= 0)
-    throw InternalProcessingException("Don't have a variable we're editing - should not happen");
+    throw InternalProcessingException("Don't have a variable we're editing -"
+                                      " should not happen");
 
   if (VariableText->hasAcceptableInput() && UnitsText->hasAcceptableInput()) {
 
     // If we have a calibration, then we need a unit
     if (Calib1Text->text().size() && !UnitsText->text().size()) {
-      _errorMessage->setText(QString::fromStdString("Must have units defined if a calibration is defined"));
+      _errorMessage->setText(QString::fromStdString("Must have units defined "
+                                              "if a calibration is defined"));
       _errorMessage->exec();
       return;
     }
@@ -81,33 +90,38 @@ void VariableComboDialog::accept()
           !Calib3Text->text().size() || !Calib2Text->text().size() ||
           !Calib1Text->text().size())
       {
-        _errorMessage->setText(QString::fromStdString("6th Order calibration needs values for 5th thru 1st orders"));
+        _errorMessage->setText(QString::fromStdString("6th Order calibration "
+                                      "needs values for 5th thru 1st orders"));
         _errorMessage->exec();
         return;
       }
     if (Calib5Text->text().size())
       if (!Calib4Text->text().size() || !Calib3Text->text().size() ||
           !Calib2Text->text().size() || !Calib1Text->text().size()) {
-        _errorMessage->setText(QString::fromStdString("5th Order calibration needs values for 4th thru 1st orders"));
+        _errorMessage->setText(QString::fromStdString("5th Order calibration "
+                                      "needs values for 4th thru 1st orders"));
         _errorMessage->exec();
         return;
       }
     if (Calib4Text->text().size())
       if (!Calib3Text->text().size() || !Calib2Text->text().size() ||
           !Calib1Text->text().size()) {
-        _errorMessage->setText(QString::fromStdString("4th Order calibration needs values for 3th thru 1st orders"));
+        _errorMessage->setText(QString::fromStdString("4th Order calibration "
+                                      "needs values for 3th thru 1st orders"));
         _errorMessage->exec();
         return;
       }
     if (Calib3Text->text().size())
       if (!Calib2Text->text().size() || !Calib1Text->text().size()) {
-        _errorMessage->setText(QString::fromStdString("3th Order calibration needs values for 2nd and 1st orders"));
+        _errorMessage->setText(QString::fromStdString("3th Order calibration "
+                                      "needs values for 2nd and 1st orders"));
         _errorMessage->exec();
         return;
       }
     if (Calib2Text->text().size() || Calib1Text->text().size()) {
       if (!Calib2Text->text().size() || !Calib1Text->text().size()) {
-        _errorMessage->setText(QString::fromStdString("Must have calibration values for at least the first two orders"));
+        _errorMessage->setText(QString::fromStdString("Must have calibration "
+                                  "values for at least the first two orders"));
         _errorMessage->exec();
         return;
       }

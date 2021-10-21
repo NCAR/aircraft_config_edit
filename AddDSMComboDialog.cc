@@ -23,6 +23,12 @@
  **
  ********************************************************************
 */
+/*
+ * This file is part of configedit:
+ * A Qt based application that allows visualization of a nidas/nimbus
+ * configuration (e.g. default.xml) file.
+ */
+
 #include "AddDSMComboDialog.h"
 #include "configwindow.h"
 #include "exceptions/InternalProcessingException.h"
@@ -210,7 +216,8 @@ bool AddDSMComboDialog::setUpDialog()
     try {
       if (_document) DSMIdText->setText(QString::number(_document->getNextDSMId()));
     } catch ( InternalProcessingException &e) {
-      _errorMessage->setText(QString::fromStdString("Bad internal error. Get help! " + e.toString()));
+      _errorMessage->setText(QString::fromStdString("Bad internal error. Get "
+                                                    "help! " + e.toString()));
       _errorMessage->exec();
       return false;
     }

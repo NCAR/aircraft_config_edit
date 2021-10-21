@@ -23,6 +23,12 @@
  **
  ********************************************************************
 */
+/*
+ * This file is part of configedit:
+ * A Qt based application that allows visualization of a nidas/nimbus
+ * configuration (e.g. default.xml) file.
+ */
+
 
 #include <QtGui>
 #include <ctime>
@@ -49,6 +55,7 @@ using namespace nidas::util;
 
 
 ConfigWindow::ConfigWindow() :
+   // Directory paths are relative to $PROJ_DIR
    _doc(NULL), _noProjDir(false),
    _gvDefault("/Configuration/GV_N677F/default.xml"),
    _c130Default("/Configuration/C130_N130AR/default.xml"),
@@ -60,11 +67,12 @@ ConfigWindow::ConfigWindow() :
 try {
     //if (!(exceptionHandler = new QtExceptionHandler()))
     //if (!(exceptionHandler = new CuteLoggingExceptionHandler(this)))
-    //to allow cerr debugging comments to show in gdb comment out the next two lines
+    //To allow cerr debugging comments to show in gdb comment out the next two
+    //lines
      if (!(exceptionHandler = new CuteLoggingStreamHandler(std::cerr,0)))
         throw 0;
 
-    XMLPlatformUtils::Initialize();
+    XMLPlatformUtils::Initialize(); //xercesc class
     _errorMessage = new QMessageBox(this);
     setupDefaultDir();
     buildMenus();
@@ -77,22 +85,25 @@ try {
     } catch (InternalProcessingException &e) {
 
         _errorMessage->setText(QString::fromStdString
-                        ("Internal Error. Get Help! " + std::string(e.what())));
+                    ("Internal Error. Get Help! " + std::string(e.what())));
         _errorMessage->exec();
 
     } catch (std::exception& e) {
         _errorMessage->setText(QString::fromStdString
-                        ("Caught Standard Error: " + std::string(e.what())));
+                    ("Caught Standard Error: " + std::string(e.what())));
         _errorMessage->exec();
     } catch (...) {
         _errorMessage->setText(QString
-                        ("Caught Unknown Initialization Exception"));
+                    ("Caught Unknown Initialization Exception"));
         _errorMessage->exec();
     }
 }
 
 
 
+/**
+ * Build the dropdown menus at the top of the main configedit window
+ */
 void ConfigWindow::buildMenus()
 {
     buildFileMenu();
@@ -104,7 +115,9 @@ void ConfigWindow::buildMenus()
     buildVariableMenu();
 }
 
-
+/**
+ * Build the "File" dropdown menu
+ */
 void ConfigWindow::buildFileMenu()
 {
     QAction * ProjAct = new QAction(tr("New &Proj Config"), this);
@@ -223,14 +236,16 @@ void ConfigWindow::buildVariableMenu()
 void ConfigWindow::buildSensorActions()
 {
     addSensorAction = new QAction(tr("&Add Sensor"), this);
-    connect(addSensorAction, SIGNAL(triggered()), this, SLOT(addSensorCombo()));
+    connect(addSensorAction, SIGNAL(triggered()), this,
+            SLOT(addSensorCombo()));
 
     editSensorAction = new QAction(tr("&Edit Sensor"), this);
     connect(editSensorAction, SIGNAL(triggered()), this,
             SLOT(editSensorCombo()));
 
     deleteSensorAction = new QAction(tr("&Delete Sensor"), this);
-    connect(deleteSensorAction, SIGNAL(triggered()), this, SLOT(deleteSensor()));
+    connect(deleteSensorAction, SIGNAL(triggered()), this,
+            SLOT(deleteSensor()));
 }
 
 void ConfigWindow::buildDSMActions()
@@ -277,7 +292,7 @@ void ConfigWindow::addSensorCombo()
     QModelIndexList indexList; // create an empty list
     sensorComboDialog->setModal(true);
     sensorComboDialog->show(model, indexList);
-cerr<<"after call to addSensorCombo->show\n";
+    cerr<<"after call to addSensorCombo->show\n";
     tableview->resizeColumnsToContents();
 }
 
@@ -395,8 +410,16 @@ void ConfigWindow::editVariableCombo()
   tableview->resizeColumnsToContents();
 }
 
-/*
- *  Setup _defaultDir and _defaultCaption class variables for use in opening/viewing files.
+/**
+ *  Setup _defaultDir and _defaultCaption class variables for use in
+ *  opening/viewing files.
+ *  @param[in] $PROJ_DIR an environment variable
+ *  @param[in] $PROJECT an environment variable
+ *  @param[in] $AIRCRAFT an environment variable
+ *  @param[out] _defaultDir the default directory to look for default.xml
+ *  @param[out] _defaultCaption the default caption to show at the top of the
+ *                              file selection window
+ *  @param[out] _projDir directory where project info is stored, from PROJ_DIR
  */
 void ConfigWindow::setupDefaultDir()
 {
@@ -409,8 +432,9 @@ void ConfigWindow::setupDefaultDir()
     } else { // No $PROJ_DIR - warn user, set default to current and bail.
        _defaultCaption.append("No $PROJ_DIR!! ");
        QString firstPart("No $PROJ_DIR Environment Variable Defined.\n");
-       QString secondPart("Configuration Editor will be missing some functionality.\n");
-       QString thirdPart("Proceedinng using current working directory.\n");
+       QString secondPart("Configuration Editor will be missing some "
+                          "functionality.\n");
+       QString thirdPart("Proceeding using current working directory.\n");
        _errorMessage->setText(firstPart+secondPart+thirdPart);
        _errorMessage->exec();
        _tmpStr = getenv("PWD");
@@ -709,16 +733,22 @@ void ConfigWindow::writeProjectName(QString projName)
     }
 }
 
-// QT oddity wrt argument passing forces this hack
+/**
+ * QT oddity wrt argument passing forces this hack
+ */
 void ConfigWindow::saveOldFile()
 {
     saveFile("");
 }
 
-// This interface is a little confusing.  The filename that will be saved
-// is found in Document.  If an origFile is passed in, that argument is used
-// to save a copy of the previous file in .confedit directory.
-//   TODO: There's got to be a less confusing way of doing this.
+/**
+ * \brief Save a configuration file
+ *
+ * This interface is a little confusing.  The filename that will be saved
+ * is found in Document.  If an origFile is passed in, that argument is used
+ * to save a copy of the previous file in .confedit directory.
+ *   TODO: There's got to be a less confusing way of doing this.
+ */
 bool ConfigWindow::saveFile(string origFile)
 {
     cerr << __func__ << endl;
@@ -927,7 +957,8 @@ void ConfigWindow::changeToIndex(const QItemSelection & selections)
     changeToIndex(il.at(0));
     tableview->resizeColumnsToContents ();
   }
-  else throw InternalProcessingException("selectionChanged signal provided no selections");
+  else throw InternalProcessingException("selectionChanged signal provided no"
+                                         " selections");
 }
 
 
@@ -988,8 +1019,12 @@ void ConfigWindow::changeToIndex(const QModelIndex & index)
 }
 
 
+/**
+ * Construct the Sensor Catalog drop-down
+ *
+ * Pulls the devicename and suffix from the sensor line as well.
+ */
 void ConfigWindow::buildSensorCatalog()
-//  Construct the Sensor Catalog drop-down
 {
 Project *project = Project::getInstance();
 
@@ -1008,7 +1043,8 @@ Project *project = Project::getInstance();
 
     xercesc::DOMElement* sensorElem;
     map<string,xercesc::DOMElement*>::const_iterator mi;
-    const map<std::string,xercesc::DOMElement*>& scMap = project->getSensorCatalog()->getMap();
+    const map<std::string,xercesc::DOMElement*>& scMap = 
+                                        project->getSensorCatalog()->getMap();
     for (mi = scMap.begin(); mi != scMap.end(); mi++) {
         cerr<<"   - adding sensor:"<<(*mi).first<<endl;
         sensorComboDialog->SensorBox->addItem(QString::fromStdString(mi->first));
@@ -1029,8 +1065,10 @@ Project *project = Project::getInstance();
     return;
 }
 
+/**
+ * Check to see if user would like current file saved
+ */
 bool ConfigWindow::askSaveFileAndContinue()
-// Check to see if user would like current file saved
 {
   QMessageBox msgBox;
   int ret = 0;

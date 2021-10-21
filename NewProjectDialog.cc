@@ -23,6 +23,12 @@
  **
  ********************************************************************
 */
+/*
+ * This file is part of configedit:
+ * A Qt based application that allows visualization of a nidas/nimbus
+ * configuration (e.g. default.xml) file.
+ */
+
 #include "NewProjectDialog.h"
 #include "configwindow.h"
 #include <QDir>

@@ -23,6 +23,12 @@
  **
  ********************************************************************
 */
+/*
+ * This file is part of configedit:
+ * A Qt based application that allows visualization of a nidas/nimbus
+ * configuration (e.g. default.xml) file.
+ */
+
 
 #include "Document.h"
 #include "configwindow.h"
@@ -67,10 +73,10 @@ static const XMLCh gNull[] = { chNull };
 
 const char *Document::getDirectory() const
 {
-static char buf[MAXPATHLEN];
+    static char buf[MAXPATHLEN];
 
-strncpy(buf,filename->c_str(),MAXPATHLEN-1);
-return dirname(buf);
+    strncpy(buf,filename->c_str(),MAXPATHLEN-1);
+    return dirname(buf);
 }
 
 
@@ -340,8 +346,8 @@ void Document::setProjectName(string projectName)
                               (const XMLCh*)XMLStringConverter(projectName));
 
   // Now set the project name in the nidas tree
-  //  NOTE: need to do this after changing the DOM attribute as ProjectItem uses old name
-  //  in setting itself up.
+  //  NOTE: need to do this after changing the DOM attribute as ProjectItem
+  //  uses old name in setting itself up.
   _project->setName(projectName);
 
   return;
@@ -479,9 +485,9 @@ cerr<< "calling updateDOMCalFile("<<a2dSNFname<<")\n";
     throw; // notify GUI
   }
 
-// Looks like the new values all pass the mustard...
-std::cerr << "Finished updating sensor values - all seems ok\n";
-   printSiteNames();
+  // Looks like the new values all pass the mustard...
+  std::cerr << "Finished updating sensor values - all seems ok\n";
+  printSiteNames();
 }
 
 void Document::updateSensorDOM(SensorItem * sItem, const std::string & device,

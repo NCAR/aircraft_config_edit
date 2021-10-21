@@ -24,10 +24,10 @@
  ********************************************************************
 */
 /*
-
-    An Qt based application that allows visualization of a nidas/nimbus
-    configuration (e.g. default.xml) file.
-*/
+ * This file is part of configedit:
+ * A Qt based application that allows visualization of a nidas/nimbus
+ * configuration (e.g. default.xml) file.
+ */
 
 #include <QApplication>
 #include <iostream>

@@ -23,6 +23,12 @@
  **
  ********************************************************************
 */
+/*
+ * This file is part of configedit:
+ * A Qt based application that allows visualization of a nidas/nimbus
+ * configuration (e.g. default.xml) file.
+ */
+
 #include "AddSensorComboDialog.h"
 #include "configwindow.h"
 #include "exceptions/InternalProcessingException.h"
@@ -100,7 +106,7 @@ void AddSensorComboDialog::setupPMSSerNums(QString pmsSpecsFile)
     dotLoc = resolution.find(".");
     if (dotLoc!=std::string::npos)
       resolution.replace(dotLoc,resolution.size()-dotLoc,"");
-//std::cerr<<"PMSSpec:"<<serNum<<" "<<rangeStep<<":"<<resolution<<"|\n";
+    //std::cerr<<"PMSSpec:"<<serNum<<" "<<rangeStep<<":"<<resolution<<"|\n";
     _pmsResltn[serNum]=resolution;
     pmsSerialNums << QString(list[i]);
   }
@@ -112,9 +118,9 @@ void AddSensorComboDialog::setupPMSSerNums(QString pmsSpecsFile)
 
 /**
  * Obtains cal files for both NCAR A2D Cards
- * Takes QString a2dCalDir
+ * @param[in] QString a2dCalDir
  * Adds all a2dCalFiles to A2DSNBox
- * Returns nothing
+ * @param[out] nothing
  * */
 void AddSensorComboDialog::setupA2DSerNums(QString a2dCalDir)
 {
@@ -154,7 +160,6 @@ void AddSensorComboDialog::setupA2DSerNums(QString a2dCalDir)
 
   free(tmp_dir);
 }
-
 
 void AddSensorComboDialog::dialogSetup(const QString & sensor)
 {
@@ -204,7 +209,8 @@ void AddSensorComboDialog::accept()
   if (SensorBox->currentText() == QString("ANALOG_NCAR") &&
       A2DTempSuffixText->text().isEmpty())
   {
-    _errorMessage->setText("A2D Temp Suffix must be set when Analog Sensor is selected - Please enter a suffix");
+    _errorMessage->setText("A2D Temp Suffix must be set when Analog Sensor is"
+                           " selected - Please enter a suffix");
     _errorMessage->exec();
     return;
   }
@@ -269,16 +275,17 @@ void AddSensorComboDialog::accept()
         _document->setIsChanged(true);
       } else {
         _errorMessage->setText(QString(
-                        "Internal Error: _document not set in AddSensorComboDialog "));
+                  "Internal Error: _document not set in AddSensorComboDialog "));
         _errorMessage->exec();
       }
 
     } catch ( InternalProcessingException &e) {
         _errorMessage->setText(QString::fromStdString(
-                        "Bad internal error. Get help! " + e.toString()));
+                  "Bad internal error. Get help! " + e.toString()));
         _errorMessage->exec();
     } catch ( nidas::util::InvalidParameterException &e) {
-      _errorMessage->setText(QString::fromStdString("Invalid parameter: " + e.toString()));
+      _errorMessage->setText(QString::fromStdString("Invalid parameter: " +
+                                                    e.toString()));
       _errorMessage->exec();
       return; // do not accept, keep dialog up for further editing
     } catch (...) {
@@ -350,10 +357,11 @@ void AddSensorComboDialog::newSensor(QString sensor)
 
    cerr << "end of newSensor()\n";
 }
+
 /**
  * SetDevice
- * Takes int channel
- * calls setText on fullDecive
+ * calls setText on fullDevice
+ * @param[in] int channel
  *
  * */
 void AddSensorComboDialog::setDevice(int channel)
@@ -362,7 +370,7 @@ void AddSensorComboDialog::setDevice(int channel)
    std::cerr << "New device channel selected " << channel << std::endl;
    DeviceValidator * devVal = DeviceValidator::getInstance();
    std::string stdSensor = sensor.toStdString();
-cout<<"setDevice stdSensor:"<<stdSensor<<endl;
+   cout << "setDevice stdSensor:" << stdSensor << endl;
 
    std::string dev = devVal->getDevicePrefix(stdSensor);
    QString fullDevice = QString::fromStdString(dev) + QString::number(channel);
@@ -374,9 +382,11 @@ void AddSensorComboDialog::existingSensor(SensorItem* sensorItem)
   // Set up the Sensor Name
   QString baseName = sensorItem->getBaseName();
   int index = SensorBox->findText(sensorItem->getBaseName());
-  cerr<<"AddSensorComboDialog index:"<<index<<" baseName:"<<baseName.toStdString()<<endl;
+  cerr << "AddSensorComboDialog index:" << index
+       << " baseName:" << baseName.toStdString()<<endl;
   if (index != -1) SensorBox->setCurrentIndex(index);
-cerr<<"AddSensorComboDialog setting edit text to" << baseName.toStdString() << "\n";
+    cerr << "AddSensorComboDialog setting edit text to"
+         << baseName.toStdString() << "\n";
   SensorBox->setEnabled(false);
   // Set up the device name and channel/board box
   QString device = sensorItem->getDevice();
@@ -401,7 +411,7 @@ cerr<<"AddSensorComboDialog setting edit text to" << baseName.toStdString() << "
   // Set up the Sensor ID box
   DSMSensor *sensor = sensorItem->getDSMSensor();
   IdText->insert(QString::number(sensor->getSensorId()));
-cerr<<"AddSensorItem IdText:"  << IdText<<"\n";
+  cerr<<"AddSensorItem IdText:"  << IdText<<"\n";
 
   // Set up the Suffix box
   SuffixText->insert(QString::fromStdString(sensor->getSuffix()));
@@ -414,7 +424,8 @@ cerr<<"AddSensorItem IdText:"  << IdText<<"\n";
         std::string a2dCalFn = a2dSensorItem->getCalFileName();
 
         if (a2dCalFn.empty()) {
-    cerr<<"AddSensorComboDialog4 setting edit text 5to" << baseName.toStdString() << "\n";
+          cerr << "AddSensorComboDialog setting edit text to"
+               << baseName.toStdString() << "\n";
           _errorMessage->setText(QString::fromStdString(
                              "Warning - no current Serial Number for A2D card.\n")
                          + QString::fromStdString(
@@ -486,13 +497,13 @@ std::cerr<<"show _pmsRes:"<<_pmsResltn["2DC18"]<<"|\n";
 // Note: the SensorBox list is set up by configwindow in buildSensorCatalog
 bool AddSensorComboDialog::setUpDialog()
 {
-cerr<<__func__<<"\n";
+  cerr<<__func__<<"\n";
   // Clear out all the fields
   DeviceText->clear();
   IdText->clear();
   SuffixText->clear();
   A2DTempSuffixText->clear();
-std::cerr<< "in setup dialog:hello"<<endl;
+  std::cerr<< "in setup dialog:hello"<<endl;
   // Interface is that if indexList is null then we are in "add" modality and
   // if it is not, then it contains the index to the SensorItem we are editing.
   NidasItem *item = NULL;
@@ -525,8 +536,8 @@ cerr<<"should probably not see this before existing sensor is called4"<<endl;
       if (_document) IdText->setText(QString::number(_document->getNextSensorId()));
       cerr<<"after call to getNextSensorId"<<endl;
     } catch ( InternalProcessingException &e) {
-      _errorMessage->setText(QString::fromStdString("Bad internal error. Get help! " +
-                                                       e.toString()));
+      _errorMessage->setText(QString::fromStdString("Bad internal error. Get"
+                                                    " help! " + e.toString()));
       _errorMessage->exec();
       return false;
     }
