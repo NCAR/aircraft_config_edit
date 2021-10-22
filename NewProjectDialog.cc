@@ -99,13 +99,26 @@ void NewProjectDialog::accept()
     // Create and execute the init_project command
     char cmd[1024];
     strcpy(cmd, _defaultDir.toStdString().c_str());
-    strcat(cmd, "/Configuration/init_project ");
+    strcat(cmd, "/scripts/init_project ");
     strcat(cmd, ProjName->text().toStdString().c_str());
     strcat(cmd, " ");
     strcat(cmd, platform.c_str());
     std::cerr << "Calling init_project with command: " << cmd << "\n";
     if (system(cmd) <= 0) {
       std::cerr << " ERROR!:  Call to init_project failed!\n";
+    }
+
+    // call vdb2xml
+    strcpy(cmd, "vardb/src/vdb2xml/vdb2xml ");
+    strcat(cmd, _defaultDir.toStdString().c_str());
+    strcat(cmd, "/");
+    strcat(cmd, ProjName->text().toStdString().c_str());
+    strcat(cmd, "/");
+    strcat(cmd, platform.c_str());
+    strcat(cmd, "/VarDB");
+    std::cerr << "Calling init_project with command: " << cmd << "\n";
+    if (system(cmd) <= 0) {
+      std::cerr << " ERROR!:  Call to vdb2xml failed!\n";
     }
 
     // get filename back to configwindow
