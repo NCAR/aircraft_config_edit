@@ -52,8 +52,8 @@ public:
         /* !
          *
          * subclasses must implement constructor getting children and adding
-         * them to child list as well as adding specific nidas object pointer to themselves
-         * and adding their DOMNode pointer to themselves.
+         * them to child list as well as adding specific nidas object pointer
+         * to themselves and adding their DOMNode pointer to themselves.
          */
 
 
@@ -61,7 +61,8 @@ public:
          *
          * subclasses must implement destructor, removing self from parent,
          * then deleting the nidasObject (as its intrinsic type),
-         * but not releasing the possibly cached DOMNode (parent should do so in removeChild())
+         * but not releasing the possibly cached DOMNode (parent should do
+         * so in removeChild())
          */
     virtual ~NidasItem() {};
 
@@ -73,8 +74,8 @@ public:
      * Subclasses reimplement to build items for each
      * type of Nidas object based on the parent's unique child iterators.
      *
-     * N.B. there is a QObject::child(objName,inheritsClass,recursiveSearch) from Qt3.
-     * Watch out...
+     * N.B. there is a QObject::child(objName,inheritsClass,recursiveSearch)
+     * from Qt3. Watch out...
      *
      */
     virtual NidasItem *child(int i) {return 0;}
@@ -161,8 +162,9 @@ protected:
     friend class NidasModel;
 
 private:
-    /// don't let anybody create a default/empty object, we always want a good nidasObject
-    /// maybe add throw InvalidConstructorException for libraries' templated code?
+    /// don't let anybody create a default/empty object, we always want a good
+    /// nidasObject. maybe add throw InvalidConstructorException for libraries'
+    /// templated code?
     //NidasItem() { };
 
 };
