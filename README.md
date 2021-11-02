@@ -32,3 +32,7 @@ In order to run configedit, you must have the following packages installed and e
     > doxygen Doxyfile
 
 Then the documentation can be viewed by pointing your browser to the html/index.html file, e.g. file:////<path_to_code_checkout>/aircraft_config_edit/html/index.html.
+
+## Continuous Deployment
+
+http://jenkins.eol.ucar.edu/jenkins/job/aircraft_configedit/
