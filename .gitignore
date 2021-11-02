@@ -5,3 +5,4 @@ ui_*.h
 .sconsign.dblite
 config.log
 configedit
+html
