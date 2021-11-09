@@ -2,6 +2,10 @@
 
 The configuration editor, 'configedit', is a Qt based application that allows visualization of a nidas/nimbus configuration (e.g. default.xml) file.
 
+To run the configuration editor, type:
+    > configedit
+When the GUI comes up, go to File -> Open and navigate to the default.xml file you would like to edit.
+
 ## Setting up your environment
 
 In order to run configedit, you must have the following packages installed and environment variables set:
@@ -25,6 +29,12 @@ In order to run configedit, you must have the following packages installed and e
     > yum install raf-devel
     > yum install nidas-devel
 
+### Testing
+
+    > yum install gtest-devel
+
+To run the tests, type:
+    > scons test
 
 ## Documentation
 [Doxygen](http://doxygen.nl/manual/starting.html) can ge used to generate documentation from the code, run

@@ -16,6 +16,8 @@ env['CXXFLAGS'] = [ '-Wall','-O2','-std=c++11' ]
 
 env.Require(['prefixoptions', 'vardb'])
 
+SConscript('tests/SConscript')
+
 sources = Split("""
     main.cc
     configwindow.cc
