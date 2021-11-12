@@ -134,7 +134,7 @@ Site *site = dynamic_cast<Site*>(item);
 string deleteSite = site->getName();
 cerr << " deleting site " << deleteSite << "\n";
 
-  Project *project = this->getProject();
+  //Project *project = this->getProject();
     // get the DOM node for this Project
   xercesc::DOMNode *projectNode = this->getDOMNode();
   if (!projectNode) {
