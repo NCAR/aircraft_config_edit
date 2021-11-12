@@ -34,6 +34,7 @@ In order to run configedit, you must have the following packages installed and e
     > yum install gtest-devel
 
 To run the tests, type:
+
     > scons test
 
 ## Documentation
