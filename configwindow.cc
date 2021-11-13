@@ -992,7 +992,18 @@ void ConfigWindow::changeToIndex(const QModelIndex & index)
   if (dynamic_cast<SiteItem*>(parentItem)) dsmMenu->setEnabled(true);
   else dsmMenu->setEnabled(false);
 
-  if (dynamic_cast<A2DSensorItem*>(parentItem)) {
+  if (dynamic_cast<A2DSensorItem*>(parentItem)) { // ANALOG_NCAR
+    SensorItem* sensorItem = dynamic_cast<SensorItem*>(parentItem);
+    cerr << "A2D SensorItem: " << sensorItem->getBaseName().toStdString() << "\n";
+
+    a2dVariableMenu->setEnabled(true);
+    tableview->setSortingEnabled(true);
+    tableview->sortByColumn(0, Qt::AscendingOrder);
+  }
+  else if (dynamic_cast<DSC_A2DSensorItem*>(parentItem)) { // ANALOG_DMMAT
+    SensorItem* sensorItem = dynamic_cast<SensorItem*>(parentItem);
+    cerr << "DSC SensorItem: " << sensorItem->getBaseName().toStdString() << "\n";
+
     a2dVariableMenu->setEnabled(true);
     tableview->setSortingEnabled(true);
     tableview->sortByColumn(0, Qt::AscendingOrder);
@@ -1003,7 +1014,8 @@ void ConfigWindow::changeToIndex(const QModelIndex & index)
   }
 
   if (dynamic_cast<SensorItem*>(parentItem) &&
-      !dynamic_cast<A2DSensorItem*>(parentItem))
+      !dynamic_cast<A2DSensorItem*>(parentItem) &&
+      !dynamic_cast<DSC_A2DSensorItem*>(parentItem))
     variableMenu->setEnabled(true);
   else variableMenu->setEnabled(false);
 
