@@ -263,14 +263,14 @@ void Document::parseFile()
     parser->setXercesUserAdoptsDOMDocument(true);
 
     cerr << "parsing: " << *filename << endl;
-        // build DOM tree
+    // build Document Object Model (DOM) tree
     domdoc = parser->parse(*filename);
     cerr << "parsed" << endl;
     delete parser;
 
     _project = new Project(); // start anew
 
-        // build Project tree
+    // build Project tree
     _project->fromDOMElement(domdoc->getDocumentElement());
 
     vector <std::string> siteNames;
@@ -414,7 +414,11 @@ cerr<<"entering Document::updateSensor\n";
   if (!item) throw InternalProcessingException("null DSMConfig");
   SensorItem* sItem = dynamic_cast<SensorItem*>(item);
   if (!sItem) throw InternalProcessingException("Sensor Item not selected");
-  A2DSensorItem* a2dSensorItem = dynamic_cast<A2DSensorItem*>(sItem);
+  // Confirm we got an A2D sensor item
+  A2DSensorItem *a2dSensorItem = dynamic_cast<A2DSensorItem*>(sItem);
+  if (!a2dSensorItem)
+    throw InternalProcessingException("Current sensor item is not an A2D sensor.");
+
   PMSSensorItem* pmsSensorItem = dynamic_cast<PMSSensorItem*>(sItem);
 
   // Get the Sensor, save all the current values and then
@@ -1850,17 +1854,11 @@ void Document::addA2DVariable(const std::string & a2dVarNamePfx,
 cerr<<"entering Document::addA2DVariable about to make call to _configWindow->getModel()"  <<"\n";
   NidasModel *model = _configWindow->getModel();
 cerr<<"got model \n";
-  A2DSensorItem * sensorItem = dynamic_cast<A2DSensorItem*>(model->getCurrentRootItem());
+  SensorItem * sensorItem = dynamic_cast<SensorItem*>(model->getCurrentRootItem());
   if (!sensorItem)
     throw InternalProcessingException("Current root index is not an A2D SensorItem.");
 
   DOMNode * sensorNode = sensorItem->getDOMNode();
-  DSMAnalogSensor* analogSensor;
-  analogSensor = dynamic_cast<DSMAnalogSensor*>(sensorItem->getDSMSensor());
-  if (!analogSensor)
-    throw InternalProcessingException("Current root nidas element is not a DSMAnalogSensor.");
-cerr << "got A2Dsensor item \n";
-
   A2DVariableItem *a2dvItem;
   A2DVariableInfo *a2dvInfo;
   vector<A2DVariableInfo*> varInfoList;
@@ -2001,7 +1999,7 @@ cerr<<"  sfx:"<<a2dvItem->getVarNameSfx()<<"\n";
 //
 //  Next we loop on the vector and call the following code for
 //  each variable - call it insertA2DVariable
-//    and include sensorItem*, sensorNode and analogSensor in the interface
+//    and include sensorItem*, sensorNode in the interface
 //
   InternalProcessingException* intProcEx = 0;
   bool gotIntProcEx = false;
@@ -2021,7 +2019,7 @@ cerr<<"  sfx:"<<a2dvItem->getVarNameSfx()<<"\n";
     }
 
     try {
-      insertA2DVariable(model, sensorItem, sensorNode, analogSensor,
+      insertA2DVariable(model, sensorItem, sensorNode,
                       varInfoList2[ii]->a2dVarNamePfx,
                       varInfoList2[ii]->a2dVarNameSfx,
                       varInfoList2[ii]->a2dVarLongName,
@@ -2059,10 +2057,10 @@ bool Document::isNum(std::string str)
     return false;
 }
 
+// JAA FIX
 void Document::insertA2DVariable(NidasModel            *model,
-                                 A2DSensorItem         *sensorItem,
+                                 SensorItem            *sensorItem,
                                  DOMNode               *sensorNode,
-                                 DSMAnalogSensor       *analogSensor,
                                  const std::string     &a2dVarNamePfx,
                                  const std::string     &a2dVarNameSfx,
                                  const std::string     &a2dVarLongName,
@@ -2072,6 +2070,13 @@ void Document::insertA2DVariable(NidasModel            *model,
                                  const std::string     &a2dVarUnits,
                                  vector <std::string>  cals)
 {
+cerr << "got A2Dsensor item \n";
+
+DSMAnalogSensor* analogSensor;
+analogSensor = dynamic_cast<DSMAnalogSensor*>(sensorItem->getDSMSensor());
+if (!analogSensor)
+  throw InternalProcessingException("Current root nidas element is not an AnalogSensor.");
+
 
 std::cerr<<"insertA2DVariable: \n   VarPfx:"<< a2dVarNamePfx<<"  ";
 std::cerr<<"VarSfx: "<<a2dVarNameSfx<<" \n  Units:"<<a2dVarUnits<<"\n   Cals:";

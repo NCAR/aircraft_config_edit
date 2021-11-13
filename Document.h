@@ -180,9 +180,8 @@ public:
                         vector <std::string> cals);
 
     void insertA2DVariable(NidasModel            *model,
-                           A2DSensorItem         *sensorItem,
+                           SensorItem            *sensorItem,
                            DOMNode               *sensorNode,
-                           DSMAnalogSensor       *analogSensor,
                            const std::string     &a2dVarNamePfx,
                            const std::string     &a2dVarNameSfx,
                            const std::string     &a2dVarLongName,
