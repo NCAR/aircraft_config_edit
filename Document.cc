@@ -315,6 +315,9 @@ void Document::parseFile()
     free(temp_dir);
 }
 
+/**
+ * @return The project name.
+ */
 string Document::getProjectName() const
 {
     return (_project->getName());
@@ -476,7 +479,7 @@ cerr<< "calling updateDOMCalFile("<<a2dSNFname<<")\n";
     sItem->fromDOM();
 
     throw(e); // notify GUI
-  } catch (InternalProcessingException) {
+  } catch (InternalProcessingException const &) {
     stringstream strS;
     strS<<currSensorId;
     this->updateSensorDOM(sItem, currDevName, strS.str(), currSuffix);
@@ -1427,7 +1430,7 @@ cerr<<" Getting and validating site.\n";
     updateDSMDOM(dsmItem, currDSMName, strS.str(), currLocation);
     dsmItem->fromDOM();
     throw(e); // notify GUI
-  } catch (InternalProcessingException) {
+  } catch (InternalProcessingException const &) {
     stringstream strS;
     strS<<currDSMId;
     this->updateDSMDOM(dsmItem, currDSMName, strS.str(), currLocation);

@@ -664,18 +664,31 @@ void ConfigWindow::show()
   QMainWindow::show();
 }
 
+/**
+ * @brief Function to allow editing the project name
+ *
+ * @warning If called before a config file has been loaded, lets user
+ *          know they need to create/select a config file.
+ */
 void ConfigWindow::editProjName()
 {
 cerr<<"In ConfigWindow::editProjName.  \n";
-    string projName = _doc->getProjectName();
-cerr<<"In ConfigWindow::editProjName.  projName = " << projName << "\n";
-    bool ok;
-    QString text = QInputDialog::getText(this, tr("Edit Project Name"),
-                                         tr("Project Name:"), QLineEdit::Normal,
-                                         QString::fromStdString(projName), &ok);
-cerr<< "after call to QInputDialog::getText\n";
-    if (ok && !text.isEmpty()) {
-       writeProjectName(text);
+    string projName;
+    if (_doc) {
+      projName = _doc->getProjectName();
+      cerr<<"In ConfigWindow::editProjName.  projName = " << projName << "\n";
+      bool ok;
+      QString text = QInputDialog::getText(this, tr("Edit Project Name"),
+                                        tr("Project Name:"), QLineEdit::Normal,
+                                        QString::fromStdString(projName), &ok);
+      cerr<< "after call to QInputDialog::getText\n";
+      if (ok && !text.isEmpty()) {
+         writeProjectName(text);
+      }
+    } else {
+      _errorMessage->setText(QString::fromStdString
+                    ("Error: Create/select a configuration file first."));
+      _errorMessage->exec();
     }
 
     return;
