@@ -315,6 +315,9 @@ void Document::parseFile()
     free(temp_dir);
 }
 
+/**
+ * @return The project name.
+ */
 string Document::getProjectName() const
 {
     return (_project->getName());
