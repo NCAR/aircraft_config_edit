@@ -12,7 +12,7 @@ import eol_scons
 
 env = Environment(tools = ['default', 'nidas', 'qt5', 'qtwidgets', 'qtgui', 'qtcore', 'qtnetwork', 'raf', 'boost_regex', 'netcdf'])
 
-env['CXXFLAGS'] = [ '-Wall','-O2','-std=c++11' ]
+env['CXXFLAGS'] = [ '-Wall','-O2','-std=c++11', '-ggdb' ]
 
 env.Require(['prefixoptions', 'vardb'])
 
@@ -36,9 +36,11 @@ sources = Split("""
     nidas_qmv/DSMItem.cc
     nidas_qmv/SensorItem.cc
     nidas_qmv/A2DSensorItem.cc
+    nidas_qmv/DSC_A2DSensorItem.cc
     nidas_qmv/PMSSensorItem.cc
     nidas_qmv/VariableItem.cc
     nidas_qmv/A2DVariableItem.cc
+    nidas_qmv/DSC_A2DVariableItem.cc
     nidas_qmv/NidasItem.cc
     nidas_qmv/NidasModel.cc
 """)
