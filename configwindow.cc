@@ -772,12 +772,19 @@ bool ConfigWindow::saveFile(string origFile)
       _errorMessage->exec();
       return false;
     }
-    if (!saveFileCopy(origFile)) {
-      _errorMessage->setText("FAILED to write copy of file.\n No backups");
-      _errorMessage->exec();
-    }
-    if (!_doc->writeDocument()) {
-      _errorMessage->setText("FAILED TO WRITE FILE! Check permissions");
+    if (_doc) { // confirm user has loaded a config file
+      if (!saveFileCopy(origFile)) {
+        _errorMessage->setText("FAILED to write copy of file.\n No backups");
+        _errorMessage->exec();
+      }
+      if (!_doc->writeDocument()) {
+        _errorMessage->setText("FAILED TO WRITE FILE! Check permissions");
+        _errorMessage->exec();
+        return false;
+      }
+    } else {
+      _errorMessage->setText(QString::fromStdString
+                    ("Error: Create/select a configuration file first."));
       _errorMessage->exec();
       return false;
     }
@@ -817,7 +824,15 @@ bool ConfigWindow::saveAsFile()
 {
     QString qfilename;
     QString _caption;
-    const std::string curFileName=_doc->getFilename();
+    std::string curFileName;
+    if (_doc) { // confirm user has loaded a config file
+      curFileName=_doc->getFilename();
+    } else {
+      _errorMessage->setText(QString::fromStdString
+                    ("Error: Create/select a configuration file first."));
+      _errorMessage->exec();
+      return false;
+    }
 
     string filename(_doc->getDirectory());
     filename.append("/default.xml");
