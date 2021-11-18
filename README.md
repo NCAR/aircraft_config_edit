@@ -17,6 +17,10 @@ In order to run configedit, you must have the following packages installed and e
     > yum install cmigits-nidas
     > git clone http://github.com/NCAR/aircraft_projects projects
 
+### Required if adding a new Project via configedit
+
+    > export RAW_DATA_DIR=..
+    > export DATA_DIR=..
 
 ### Optional (but helpful)
 
