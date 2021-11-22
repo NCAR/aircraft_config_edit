@@ -40,7 +40,7 @@ DeviceValidator::_DeviceDefinitionStruct DeviceValidator::_Definitions[] = {
 
 {"", "", 0, 0, DeviceValidator::_DeviceDefinition::SERIAL},
 {"ANALOG_NCAR", "/dev/ncar_a2d", 0, 2, DeviceValidator::_DeviceDefinition::ANALOG},
-{"ANALOG_DMMAT", "/dev/dmmat_a2d0", 0, 2, DeviceValidator::_DeviceDefinition::ANALOG},
+{"ANALOG_DMMAT", "/dev/dmmat_a2d", 0, 2, DeviceValidator::_DeviceDefinition::ANALOG},
 {"ACDFO3", "usock::", 30100, 32766, DeviceValidator::_DeviceDefinition::UDP},
 {"ADC-GV", "/dev/arinc", 0, 9, DeviceValidator::_DeviceDefinition::SERIAL},
 {"AMS", "/dev/ttyS", 1, 12, DeviceValidator::_DeviceDefinition::SERIAL},
