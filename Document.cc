@@ -419,9 +419,6 @@ cerr<<"entering Document::updateSensor\n";
   if (!sItem) throw InternalProcessingException("Sensor Item not selected");
   // Confirm we got an A2D sensor item
   A2DSensorItem *a2dSensorItem = dynamic_cast<A2DSensorItem*>(sItem);
-  if (!a2dSensorItem)
-    throw InternalProcessingException("Current sensor item is not an A2D sensor.");
-
   PMSSensorItem* pmsSensorItem = dynamic_cast<PMSSensorItem*>(sItem);
 
   // Get the Sensor, save all the current values and then
@@ -1389,7 +1386,7 @@ void Document::updateDSM(const std::string & dsmName,
 cerr<<"entering Document::updateDSM\n";
 
   // Gather together all the elements we'll need to update the Sensor
-  // in both the DOM model and the Nidas Model
+  // in both the document object model (DOM) and the Nidas Model
   NidasModel *model = _configWindow->getModel();
 
   NidasItem *item = 0;
