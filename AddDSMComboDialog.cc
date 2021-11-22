@@ -56,15 +56,17 @@ AddDSMComboDialog::AddDSMComboDialog(QWidget *parent):
 void AddDSMComboDialog::accept()
 {
   // Validate input and notify if problematic
+  // Validate the input to the "DSM Name" field
   if (!DSMNameText->hasAcceptableInput()) {
     QString msg("Name field must be a sequence of letters, numbers and a few");
     msg.append(" characters incl: '_' '/' '.' '+' and '-'");
     _errorMessage->setText(msg);
     _errorMessage->exec();
-    std::cerr << "Unaccptable input in Name field\n";
+    std::cerr << "Unacceptable input in Name field\n";
     return;
   }
 
+  // Validate the input to the "DSM Id" field
   if (!DSMIdText->hasAcceptableInput()) {
     QString msg("Id field must be a one or two digit integer");
     msg.append("\n  Current Convention is for RAF DSMs us to use the ");
@@ -72,25 +74,31 @@ void AddDSMComboDialog::accept()
     msg.append("\n    and that wing DSMs get a unique number > 80.");
     _errorMessage->setText(msg);
     _errorMessage->exec();
-    std::cerr << "Unaccptable input in Id field\n";
+    std::cerr << "Unacceptable input in Id field\n";
     return;
   }
 
+  // Validate the input to the "Location" field
   if (!LocationText->hasAcceptableInput()) {
     QString msg("Location cannot be left blank");
     _errorMessage->setText(msg);
     _errorMessage->exec();
-    std::cerr << "Unaccptable input in Location field\n";
+    std::cerr << "Unacceptable input in Location field\n";
     return;
   }
 
+  // Write status to errors Window
   std::cerr << "AddDSMComboDialog::accept()\n";
   std::cerr << " DSM: " + DSMNameText->text().toStdString() + "<EOS>\n";
   std::cerr << " id: " + DSMIdText->text().toStdString() + "<EOS>\n";
   std::cerr << " location: " + LocationText->text().toStdString() + "<EOS>\n";
 
+  // All input acceptable, so update DSM
   try {
+     // Confirm we have loaded a document
      if (_document) {
+       // If indexList is not null then we have a Sensor for this DSM,
+       // so the DSM exists. Ergo, we are in edit mode.
        if (_indexList.size() > 0)
          _document->updateDSM(DSMNameText->text().toStdString(),
                               DSMIdText->text().toStdString(),
@@ -102,7 +110,7 @@ void AddDSMComboDialog::accept()
                            DSMIdText->text().toStdString(),
                            LocationText->text().toStdString()
                            );
-        _document->setIsChanged(true);
+       _document->setIsChanged(true);
      }
   } catch ( InternalProcessingException &e) {
     QString msg("Bad internal error. Get help! : ");
