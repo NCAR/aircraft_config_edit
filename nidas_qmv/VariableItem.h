@@ -76,6 +76,7 @@ public:
     }
 
     xercesc::DOMNode* getVariableDOMNode(QString name) {
+        // Looking for variable node in DOM with value "name"
         return _variableDOMNode=findVariableDOMNode(name);
     }
 
