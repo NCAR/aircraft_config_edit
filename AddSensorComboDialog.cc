@@ -206,11 +206,25 @@ void AddSensorComboDialog::accept()
   if (SensorBox->currentText() == QString("ANALOG_DMMAT") ){
         cerr<<"DMMAT adding correctly in AddSensor ComboDialog::accept"<<endl;
     }
+
   if (SensorBox->currentText() == QString("ANALOG_NCAR") &&
       A2DTempSuffixText->text().isEmpty())
   {
+    // Get the DSM name
+    DSMItem* dsmItem = dynamic_cast<DSMItem*>(_model->getCurrentRootItem());
+    if (!dsmItem)
+      throw InternalProcessingException("Current root index is not a DSM.");
+    DSMConfig* dsm = dsmItem->getDSMConfig();
+    std::string currDSMName = dsm->getName();
+    // Remove "dsm" from name, if extant
+    if (currDSMName.compare(0,3,"dsm") == 0)
+        currDSMName.erase(0,3);
+    // Add dsm identifier as suggested suffix
+    A2DTempSuffixText->insert(QString::fromStdString(currDSMName));
+    cout << "Adding variable to DSM " << currDSMName << "\n";
     _errorMessage->setText("A2D Temp Suffix must be set when Analog Sensor is"
-                           " selected - Please enter a suffix");
+                           " selected - Please enter a suffix. Defaulting to"
+                           " DSM identifier");
     _errorMessage->exec();
     return;
   }
