@@ -138,6 +138,22 @@ void AddA2DVariableComboDialog::accept()
       // If we're in edit mode, we need to delete the A2DVariableItem
       // from the model first and then we can add it back in.
       if (editMode)  {
+         // In order to edit a variable, it is deleted then added back, but
+         // it is not possible to delete the A2DTEMP variable from an
+         // ANALOG_NCAR card since it is required, so end out with duplicate
+         // entry and edit fails during validate. The ANALOG_NCAR card is soon
+         // to be retired so this will not be fixed. Direct user to have SE
+         // hand-edit XML.
+         if (VariableBox->currentText().toStdString().compare(0,7,"A2DTEMP") ==0) {
+            QString msg("Unable to edit A2DTEMP variables via configedit due");
+            msg.append(" to nuances of software that will not be fixed.");
+            msg.append(" Cancel out of edit window and contact SE for");
+            msg.append(" assistance hand-editing XML file.");
+            QMessageBox * _errorMessage = new QMessageBox(this);
+            _errorMessage->setText(msg);
+            _errorMessage->exec();
+            return; // bail
+         }
          if(SRBox->currentIndex() !=_origSRBoxIndex) {
             QString msg("NOTE: changing the sample rate.");
             msg.append("For data acquisition you MAY need ");
