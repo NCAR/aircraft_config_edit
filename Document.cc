@@ -419,6 +419,7 @@ cerr<<"entering Document::updateSensor\n";
   if (!sItem) throw InternalProcessingException("Sensor Item not selected");
   // Confirm we got an A2D sensor item
   A2DSensorItem *a2dSensorItem = dynamic_cast<A2DSensorItem*>(sItem);
+  DSC_A2DSensorItem *dscA2dSensorItem = dynamic_cast<DSC_A2DSensorItem*>(sItem);
   PMSSensorItem* pmsSensorItem = dynamic_cast<PMSSensorItem*>(sItem);
 
   // Get the Sensor, save all the current values and then
@@ -431,7 +432,9 @@ cerr<<"entering Document::updateSensor\n";
   std::string currA2DCalFname;
   if (a2dSensorItem) {
     currA2DTempSfx = a2dSensorItem->getA2DTempSuffix();
+  }
 
+  if (a2dSensorItem||dscA2dSensorItem) {
     const map<string,CalFile*>& cfs = sensor->getCalFiles();
     if (!cfs.empty()) {
         currA2DCalFname = cfs.begin()->second->getFile();
@@ -442,12 +445,19 @@ cerr<<"entering Document::updateSensor\n";
   // Start by updating the sensor DOM
   updateSensorDOM(sItem, device, lcId, sfx);
 
-  // If we've got an analog sensor then we need to update it's temp suffix
-  // and its calibration file name
+  // If we've got an NCAR analog sensor then we need to update it's temp suffix
   if (a2dSensorItem) {
     a2dSensorItem->updateDOMA2DTempSfx(currA2DTempSfx, a2dTempSfx);
-cerr<< "calling updateDOMCalFile("<<a2dSNFname<<")\n";
+  }
+  // If we've got an analog sensor of any kind, then we need to update its
+  // calibration file name
+  if (a2dSensorItem) {
+    cout<< "calling updateDOMCalFile("<<a2dSNFname<<")\n";
     a2dSensorItem->updateDOMCalFile(a2dSNFname);
+  }
+  if (dscA2dSensorItem) {
+    cout<< "calling DSC updateDOMCalFile("<<a2dSNFname<<")\n";
+    dscA2dSensorItem->updateDOMCalFile(a2dSNFname);
   }
 
   // If we've got a PMS sensor then we need to update it's serial number
@@ -471,7 +481,12 @@ cerr<< "calling updateDOMCalFile("<<a2dSNFname<<")\n";
     if (a2dSensorItem) {
       a2dSensorItem->updateDOMA2DTempSfx(QString::fromStdString(a2dTempSfx),
                                          currA2DTempSfx.toStdString());
+    }
+    if (a2dSensorItem) {
       a2dSensorItem->updateDOMCalFile(currA2DCalFname);
+    }
+    if (dscA2dSensorItem) {
+      dscA2dSensorItem->updateDOMCalFile(currA2DCalFname);
     }
     sItem->fromDOM();
 
@@ -483,7 +498,12 @@ cerr<< "calling updateDOMCalFile("<<a2dSNFname<<")\n";
     if (a2dSensorItem) {
       a2dSensorItem->updateDOMA2DTempSfx(QString::fromStdString(a2dTempSfx),
                                          currA2DTempSfx.toStdString());
+    }
+    if (a2dSensorItem) {
       a2dSensorItem->updateDOMCalFile(currA2DCalFname);
+    }
+    if (dscA2dSensorItem) {
+      dscA2dSensorItem->updateDOMCalFile(currA2DCalFname);
     }
     sItem->fromDOM();
     throw; // notify GUI

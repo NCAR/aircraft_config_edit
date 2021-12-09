@@ -54,7 +54,6 @@ cerr<<"DSC_A2DSensorItem::Child  _sensor is:also not here" << "\n";
     SampleTagIterator it;
     cout << "In DSC_A2DSensorItem name of sensor is: " << _sensor->getName() << "\n";
     DSC_A2DSensor * a2dsensor = dynamic_cast<DSC_A2DSensor*>(_sensor);
-    //A2DSensor *a2dsensor = dynamic_cast<A2DSensor*>(_sensor);
     for (j=0, it = a2dsensor->getSampleTagIterator(); it.hasNext();) {
 cout<<"DSC_A2DSensorItem::Child  _sensor is:trying" <<_sensor<<" also j="<<j<< "\n";
         SampleTag* sample = (SampleTag*)it.next(); // XXX cast from const
@@ -92,47 +91,6 @@ cerr<<"refreshChildItems now _sensor is:" << _sensor << "\n";
       NidasItem *childItem = new DSC_A2DVariableItem(variable, sample, j,
                                                  model, this);
       childItems.append( childItem);
-    }
-  }
-}
-
-QString DSC_A2DSensorItem::getA2DTempSuffix()
-{
-cerr<<"geta2dTempSuffix _sensor is:" << _sensor << "\n";
-  DSC_A2DSensor * a2dsensor = dynamic_cast<DSC_A2DSensor*>(_sensor);
-cerr<<"get a2dTempSuffix now _sensor is:" << _sensor << "\n";
-  SampleTagIterator it;
-  for (it = a2dsensor->getSampleTagIterator(); it.hasNext();) {
-    SampleTag* sample = (SampleTag*)it.next(); // XXX cast from const
-    for (VariableIterator vt = sample->getVariableIterator();
-             vt.hasNext();) {
-      Variable* variable = (Variable*)vt.next(); // XXX cast from const
-      std::string varName = variable->getName();
-      if (!strncmp(varName.c_str(), "A2DTEMP_", 8)) {
-        QString qStr = QString::fromStdString(varName);
-        std::cerr << "in DSC_A2DSensorItem::getA2DTempSuffix() returning suffix: " << qStr.right(qStr.size()-7).toStdString() << "\n";
-        return qStr.right(qStr.size()-7);  // Keep the _ in the suffix name
-      }
-    }
-  }
-  return QString();
-}
-
-void DSC_A2DSensorItem::setNidasA2DTempSuffix(std::string a2dTempSfx)
-{
-cerr<<"setNidasa2dTempSuffix _sensor is:" << _sensor << "\n";
-  DSC_A2DSensor * a2dsensor = dynamic_cast<DSC_A2DSensor*>(_sensor);
-cerr<<"setNidasa2dTempSuffix now _sensor is:" << _sensor << "\n";
-  SampleTagIterator it;
-  for (it = a2dsensor->getSampleTagIterator(); it.hasNext();) {
-    SampleTag* sample = (SampleTag*)it.next(); // XXX cast from const
-    for (VariableIterator vt = sample->getVariableIterator();
-             vt.hasNext();) {
-      Variable* variable = (Variable*)vt.next(); // XXX cast from const
-      std::string varName = variable->getName();
-      if (!strncmp(varName.c_str(), "A2DTEMP_", 8)) {
-        variable->setName("A2DTEMP_" + a2dTempSfx);
-      }
     }
   }
 }
@@ -209,27 +167,6 @@ std::cerr<< "in DSC_A2DSensorItem::updateDOMCalFile(" << calFileName << ")\n";
                            (const XMLCh*)XMLStringConverter(calFileName));
 
   return;
-}
-
-void DSC_A2DSensorItem::updateDOMA2DTempSfx(QString oldSfx, std::string newSfx)
-{
-  // Find the A2DTemperature variable in childItems list
-  NidasItem *var;
-  DSC_A2DVariableItem *a2dVar;
-  QList<NidasItem*>::iterator i;
-  for (i = childItems.begin(); i!=childItems.end(); ++i) {
-    var = *i;
-    a2dVar = dynamic_cast<DSC_A2DVariableItem*>(var);
-    if (!a2dVar) 
-      throw InternalProcessingException("SensorItem::child not an DSC_A2DVariableItem");
-    if (a2dVar->name().contains("A2DTEMP")) {
-      QString qStr("A2DTEMP");
-      qStr.append(oldSfx);
-      std::string str("A2DTEMP");
-      str.append(newSfx);
-      a2dVar->setDOMName(qStr,str);
-    }
-  }
 }
 
 /*!

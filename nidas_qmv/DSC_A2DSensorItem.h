@@ -62,12 +62,8 @@ public:
 
     int childColumnCount() const {return 8;}
 
-    QString getA2DTempSuffix();
-
     bool removeChild(NidasItem *item);
 
-    void setNidasA2DTempSuffix(std::string a2dTempSfx);
-    void updateDOMA2DTempSfx(QString oldSfx, std::string newSfx);
     void updateDOMCalFile(const std::string & calFileName);
 
     std::string getCalFileName();
@@ -78,7 +74,6 @@ public:
 //protected:
         // get/convert to the underlying model pointers
     DSC_A2DSensor *getDSC_A2DSensor() const { return dynamic_cast<DSC_A2DSensor*>(_sensor); }
-    //A2DSensor *getA2DSensor() const { return dynamic_cast<A2DSensor*>(_sensor); }
 
 private:
     //DSC_A2DSensor * _sensor;
