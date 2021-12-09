@@ -140,7 +140,7 @@ std::string A2DSensorItem::getCalFileName()
 cerr<<"Before doing anything with _sensor" << "\n";
 //cerr<<"AddSensorItem a2dsensorItem:"  << a2dSensorItem<<"\n";
   const map<string,CalFile*>& cfs = _sensor->getCalFiles();
-cerr<<"senspr->getCalFiles works" << "\n";
+cerr<<"sensor->getCalFiles works" << "\n";
 
   if (!cfs.empty()) return cfs.begin()->second->getFile();
 
