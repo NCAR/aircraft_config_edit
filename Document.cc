@@ -622,14 +622,14 @@ cerr << "entering Document::addSensor about to make call to "
   // If we've got an analog sensor then we need to set up a calibration file,
   // a rate, a sample and variable for it
   if (sensorIdName ==  "ANALOG_NCAR") {
-    addA2DCalFile(elem, dsmNode, a2dSNFname);
+    addA2DCalFile(elem, dsmNode, a2dSNFname, sensorIdName);
     addA2DRate(elem, dsmNode, a2dSNFname);
-    addSampAndVar(elem, dsmNode, a2dTempSfx);
+    addSampAndVar(elem, dsmNode, a2dTempSfx); // add A2DTEMP var
   }
 
   if (sensorIdName ==  "ANALOG_DMMAT") {
+    addA2DCalFile(elem, dsmNode, a2dSNFname, sensorIdName);
     addA2DRate(elem, dsmNode, a2dSNFname);
-    addSampAndVar(elem, dsmNode, a2dTempSfx);
   }
 
   // If we've got a PMS sensor then we need to set up it's serial number
@@ -885,7 +885,8 @@ void Document::addMissingEngCalFile(QString filename)
 
 void Document::addA2DCalFile(xercesc::DOMElement *sensorElem,
                           xercesc::DOMNode *dsmNode,
-                          const std::string & a2dSNFname)
+                          const std::string & a2dSNFname,
+                          const std::string & sensorIdName)
 {
   const XMLCh * calfileTagName = 0;
   XMLStringConverter xmlSamp("calfile");
@@ -903,10 +904,17 @@ void Document::addA2DCalFile(xercesc::DOMElement *sensorElem,
                              + (std::string)XMLStringConverter(e.getMessage()));
   }
 
-  // set up the calfile node attributes
+  // set up the calfile node attributes - JAA
+  if (sensorIdName ==  "ANALOG_DMMAT") {
+  calfileElem->setAttribute((const XMLCh*)XMLStringConverter("path"),
+                            (const XMLCh*)XMLStringConverter
+                            ("${PROJ_DIR}/Configuration/cal_files/A2D/DMMAT"));
+  }
+  if (sensorIdName ==  "ANALOG_NCAR") {
   calfileElem->setAttribute((const XMLCh*)XMLStringConverter("path"),
                             (const XMLCh*)XMLStringConverter
                             ("${PROJ_DIR}/Configuration/cal_files/A2D/"));
+  }
   calfileElem->setAttribute((const XMLCh*)XMLStringConverter("file"),
                             (const XMLCh*)XMLStringConverter(a2dSNFname));
 

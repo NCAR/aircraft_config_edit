@@ -132,7 +132,8 @@ public:
                     const std::string & a2dSNFname);
     void addA2DCalFile(xercesc::DOMElement *sensorElem,
                     xercesc::DOMNode *dsmNode,
-                    const std::string & a2dSNFname);
+                    const std::string & a2dSNFname,
+                    const std::string & sensorIdName);
     void addSampAndVar(xercesc::DOMElement *sensorElem, 
                        xercesc::DOMNode *dsmNode, 
                        const std::string & a2dTempSfx);
