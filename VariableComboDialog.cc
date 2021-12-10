@@ -247,6 +247,7 @@ void VariableComboDialog::show(NidasModel* model,
     throw InternalProcessingException("Selection is not a Variable.");
 
   VariableText->insert(QString::fromStdString(_varItem->getBaseName()));
+  VariableText->setEnabled(false);
   LongNameText->insert(_varItem->getLongName());
 
   float rate = _varItem->getRate();
