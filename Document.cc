@@ -904,7 +904,7 @@ void Document::addA2DCalFile(xercesc::DOMElement *sensorElem,
                              + (std::string)XMLStringConverter(e.getMessage()));
   }
 
-  // set up the calfile node attributes - JAA
+  // set up the calfile node attributes
   if (sensorIdName ==  "ANALOG_DMMAT") {
   calfileElem->setAttribute((const XMLCh*)XMLStringConverter("path"),
                             (const XMLCh*)XMLStringConverter
