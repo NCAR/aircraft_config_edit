@@ -1545,8 +1545,35 @@ cerr<< "in getAvailableA2DChannels" << endl;
 
   SensorItem * sensorItem = dynamic_cast<SensorItem*>(model->getCurrentRootItem());
   if (!sensorItem) {
-    throw InternalProcessingException("Parent of VariableItem is not a SensorItem!");
-    cerr<<" sensorItem = NULL\n";
+    // New ANALOG_DMMAT sensors are added without any default variables
+    // necessitating the ability to add a variable while a DMMAT sensor is
+    // selected. Check for that case here.
+    DSMItem * dsmItem = dynamic_cast<DSMItem*>(model->getCurrentRootItem());
+    if (dsmItem) { // parent is a DSM item
+        // Get selected indices and make sure it's only one
+        QTableView *tableview = _configWindow->getTableView();
+        QModelIndexList indexList = tableview->selectionModel()->selectedIndexes();
+        for (int i=0; i<indexList.size(); i++) {
+            QModelIndex index = indexList[i];
+            // the NidasItem for the selected row resides in column 0
+            if (index.column() !=0) continue;
+            NidasItem *item = model->getItem(index);
+            SensorItem* _Item = dynamic_cast<SensorItem*>(item);
+            if (_Item)
+              cerr << _Item->devicename() << " is a sensor item\n";
+        }
+        // get child of DSM Item and set as currentRootIndex
+        model->setCurrentRootIndex(indexList[0]);
+        sensorItem = dynamic_cast<SensorItem*>(model->getCurrentRootItem());
+        if (!sensorItem) {
+            throw InternalProcessingException("Parent of VariableItem is not a SensorItem!");
+        } else {
+            cerr << "Current root item " << sensorItem->devicename();
+            cerr << " is a sensor item\n";
+        }
+    } else {
+      throw InternalProcessingException("Parent of VariableItem is not a SensorItem!");
+    }
     return availableChannels;
   }
 
@@ -1888,6 +1915,7 @@ cerr<<"got model \n";
 
   DOMNode * sensorNode = sensorItem->getDOMNode();
   A2DVariableItem *a2dvItem;
+  DSC_A2DVariableItem *dscA2dvItem;
   A2DVariableInfo *a2dvInfo;
   vector<A2DVariableInfo*> varInfoList;
   vector<A2DVariableInfo*> varInfoList2;
@@ -1910,7 +1938,7 @@ cerr<<"got model \n";
 cerr << "put together struct for new variable and put it in the list\n";
 
   QModelIndexList qmIdxList;
-cerr<<"Find existing A2D Variable Items (non-A2DTemp) and add them to list:\n";
+cout<<"Find existing A2D Variable Items (non-A2DTemp) and add them to list:\n";
 // Step through all the child elements in the sensorItem:
   for (int i = 0; i<sensorItem->childCount(); i++) {
 //  Gather key elements of children
@@ -1918,6 +1946,16 @@ cerr<<"Find existing A2D Variable Items (non-A2DTemp) and add them to list:\n";
     if (a2dvItem) {
       a2dvInfo = new A2DVariableInfo;
     } else {
+      // Temporarily catch if trying to add a variable to a DMMAT sensor.
+      // Not implemented yet.
+      dscA2dvItem = dynamic_cast<DSC_A2DVariableItem*>(sensorItem->child(i));
+      if (dscA2dvItem) {
+          QMessageBox msgBox;
+          QString msg("Adding a variable to a DMMAT card not implemented yet");
+          msgBox.setText(msg);
+          msgBox.exec();
+          return;
+      }
       throw InternalProcessingException("Child of A2D Sensor is not A2D Variable.");
     }
 // If we've got an A2DTEMP variable we need to skip it
