@@ -384,7 +384,7 @@ void AddSensorComboDialog::setDevice(int channel)
    std::cerr << "New device channel selected " << channel << std::endl;
    DeviceValidator * devVal = DeviceValidator::getInstance();
    std::string stdSensor = sensor.toStdString();
-   cout << "setDevice stdSensor:" << stdSensor << endl;
+   cerr << "setDevice stdSensor:" << stdSensor << endl;
 
    std::string dev = devVal->getDevicePrefix(stdSensor);
    QString fullDevice = QString::fromStdString(dev) + QString::number(channel);
