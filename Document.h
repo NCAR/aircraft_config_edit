@@ -181,7 +181,37 @@ public:
                         const std::string & a2dVarUnits, 
                         vector <std::string> cals);
 
+    void addNCARVariable(const std::string & a2dVarNamePfx,
+                        const std::string & a2dVarNameSfx,
+                        const std::string & a2dVarLongName,
+                        const std::string & a2dVarVolts,
+                        const std::string & a2dVarChannel,
+                        const std::string & a2dSR,
+                        const std::string & a2dVarUnits,
+                        vector <std::string> cals);
+
+    void addDSCVariable(const std::string & a2dVarNamePfx,
+                        const std::string & a2dVarNameSfx,
+                        const std::string & a2dVarLongName,
+                        const std::string & a2dVarVolts,
+                        const std::string & a2dVarChannel,
+                        const std::string & a2dSR,
+                        const std::string & a2dVarUnits,
+                        vector <std::string> cals);
+
     void insertA2DVariable(NidasModel            *model,
+                           SensorItem            *sensorItem,
+                           DOMNode               *sensorNode,
+                           const std::string     &a2dVarNamePfx,
+                           const std::string     &a2dVarNameSfx,
+                           const std::string     &a2dVarLongName,
+                           const std::string     &a2dVarVolts,
+                           const std::string     &a2dVarChannel,
+                           const std::string     &a2dVarSR,
+                           const std::string     &a2dVarUnits,
+                           vector <std::string>  cals);
+
+    void insertDSC_A2DVariable(NidasModel            *model,
                            SensorItem            *sensorItem,
                            DOMNode               *sensorNode,
                            const std::string     &a2dVarNamePfx,
@@ -250,6 +280,17 @@ private:
 
 // If we had a vector of A2DVariable structures:
     struct A2DVariableInfo {
+        std::string a2dVarNamePfx;
+        std::string a2dVarNameSfx;
+        std::string a2dVarLongName;
+        std::string a2dVarVolts;
+        std::string a2dVarChannel;
+        std::string a2dVarSR;
+        std::string a2dVarUnits;
+        vector <std::string> cals;
+    };
+
+    struct DSC_A2DVariableInfo {
         std::string a2dVarNamePfx;
         std::string a2dVarNameSfx;
         std::string a2dVarLongName;

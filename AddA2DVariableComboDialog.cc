@@ -247,13 +247,25 @@ std::cerr<< "A2DVariableDialog called in edit mode\n";
     }
 
     A2DVariableItem* a2dVarItem = dynamic_cast<A2DVariableItem*>(item);
-    if (!a2dVarItem)
-      throw InternalProcessingException("Selection is not an A2DVariable.");
+    if (!a2dVarItem) {
+      DSC_A2DVariableItem* dscA2dVarItem = dynamic_cast<DSC_A2DVariableItem*>(item);
+      if (dscA2dVarItem) {
+        QMessageBox msgBox;
+        QString msg("Editing a variable on a DMMAT card not implemented yet");
+        msgBox.setText(msg);
+        msgBox.exec();
+        return;
+      } else {
+        throw InternalProcessingException("Selection is not an A2DVariable.");
+      }
+    }
 
     // TODO:
     // if (removeSuffix(a2dVarItem->name()) == "A2DTEMP")
     //    Need to set up the form for Suffix edit only
 
+    // If get here with a DMMAT variable, call to name() causes code to crash
+    // so tempoarily block editing a DMMAT var with msgBox call above.
     int index = VariableBox->findText(removeSuffix(a2dVarItem->name()));
     if (index == -1) {
       QMessageBox * errorMessage = new QMessageBox(this);
@@ -368,6 +380,7 @@ std::cerr<< "A2DVariableDialog called in edit mode\n";
     SuffixText->insert(getSuffix(a2dVarItem->name()));
 
   } else {
+std::cerr<< "A2DVariableDialog called in add mode\n";
       clearCalLabels();
       setWindowTitle("Add Variable");
       _addMode = true;
