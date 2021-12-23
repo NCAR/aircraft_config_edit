@@ -138,6 +138,22 @@ void AddA2DVariableComboDialog::accept()
       // If we're in edit mode, we need to delete the A2DVariableItem
       // from the model first and then we can add it back in.
       if (editMode)  {
+         // In order to edit a variable, it is deleted then added back, but
+         // it is not possible to delete the A2DTEMP variable from an
+         // ANALOG_NCAR card since it is required, so end out with duplicate
+         // entry and edit fails during validate. The ANALOG_NCAR card is soon
+         // to be retired so this will not be fixed. Direct user to have SE
+         // hand-edit XML.
+         if (VariableBox->currentText().toStdString().compare(0,7,"A2DTEMP") ==0) {
+            QString msg("Unable to edit A2DTEMP variables via configedit due");
+            msg.append(" to nuances of software that will not be fixed.");
+            msg.append(" Cancel out of edit window and contact SE for");
+            msg.append(" assistance hand-editing XML file.");
+            QMessageBox * _errorMessage = new QMessageBox(this);
+            _errorMessage->setText(msg);
+            _errorMessage->exec();
+            return; // bail
+         }
          if(SRBox->currentIndex() !=_origSRBoxIndex) {
             QString msg("NOTE: changing the sample rate.");
             msg.append("For data acquisition you MAY need ");
@@ -231,13 +247,25 @@ std::cerr<< "A2DVariableDialog called in edit mode\n";
     }
 
     A2DVariableItem* a2dVarItem = dynamic_cast<A2DVariableItem*>(item);
-    if (!a2dVarItem)
-      throw InternalProcessingException("Selection is not an A2DVariable.");
+    if (!a2dVarItem) {
+      DSC_A2DVariableItem* dscA2dVarItem = dynamic_cast<DSC_A2DVariableItem*>(item);
+      if (dscA2dVarItem) {
+        QMessageBox msgBox;
+        QString msg("Editing a variable on a DMMAT card not implemented yet");
+        msgBox.setText(msg);
+        msgBox.exec();
+        return;
+      } else {
+        throw InternalProcessingException("Selection is not an A2DVariable.");
+      }
+    }
 
     // TODO:
     // if (removeSuffix(a2dVarItem->name()) == "A2DTEMP")
     //    Need to set up the form for Suffix edit only
 
+    // If get here with a DMMAT variable, call to name() causes code to crash
+    // so tempoarily block editing a DMMAT var with msgBox call above.
     int index = VariableBox->findText(removeSuffix(a2dVarItem->name()));
     if (index == -1) {
       QMessageBox * errorMessage = new QMessageBox(this);
@@ -352,6 +380,7 @@ std::cerr<< "A2DVariableDialog called in edit mode\n";
     SuffixText->insert(getSuffix(a2dVarItem->name()));
 
   } else {
+std::cerr<< "A2DVariableDialog called in add mode\n";
       clearCalLabels();
       setWindowTitle("Add Variable");
       _addMode = true;

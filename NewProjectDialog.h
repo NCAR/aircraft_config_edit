@@ -69,6 +69,8 @@ protected:
 private:
     QString _defaultDir;
     ConfigWindow* _confWin;
+    bool initProject(std::string platform);
+    bool convertVdb2xml(std::string platform);
 
 };
 

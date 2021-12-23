@@ -772,12 +772,19 @@ bool ConfigWindow::saveFile(string origFile)
       _errorMessage->exec();
       return false;
     }
-    if (!saveFileCopy(origFile)) {
-      _errorMessage->setText("FAILED to write copy of file.\n No backups");
-      _errorMessage->exec();
-    }
-    if (!_doc->writeDocument()) {
-      _errorMessage->setText("FAILED TO WRITE FILE! Check permissions");
+    if (_doc) { // confirm user has loaded a config file
+      if (!saveFileCopy(origFile)) {
+        _errorMessage->setText("FAILED to write copy of file.\n No backups");
+        _errorMessage->exec();
+      }
+      if (!_doc->writeDocument()) {
+        _errorMessage->setText("FAILED TO WRITE FILE! Check permissions");
+        _errorMessage->exec();
+        return false;
+      }
+    } else {
+      _errorMessage->setText(QString::fromStdString
+                    ("Error: Create/select a configuration file first."));
       _errorMessage->exec();
       return false;
     }
@@ -817,7 +824,15 @@ bool ConfigWindow::saveAsFile()
 {
     QString qfilename;
     QString _caption;
-    const std::string curFileName=_doc->getFilename();
+    std::string curFileName;
+    if (_doc) { // confirm user has loaded a config file
+      curFileName=_doc->getFilename();
+    } else {
+      _errorMessage->setText(QString::fromStdString
+                    ("Error: Create/select a configuration file first."));
+      _errorMessage->exec();
+      return false;
+    }
 
     string filename(_doc->getDirectory());
     filename.append("/default.xml");
@@ -991,6 +1006,7 @@ void ConfigWindow::changeToIndex(const QModelIndex & index)
 
 
   NidasItem *parentItem = model->getItem(index.parent());
+  NidasItem *item = model->getItem(index);
 
 //parentItem->setupyouractions(ahelper);
   //ahelper->addSensor(true);
@@ -999,26 +1015,51 @@ void ConfigWindow::changeToIndex(const QModelIndex & index)
     tableview->sortByColumn(0, Qt::AscendingOrder);
     tableview->sortByColumn(1, Qt::AscendingOrder);
 
-  if (dynamic_cast<DSMItem*>(parentItem))  sensorMenu->setEnabled(true);
-  else sensorMenu->setEnabled(false);
+  if (dynamic_cast<SiteItem*>(parentItem)) {
+    dsmMenu->setEnabled(true);
+    a2dVariableMenu->setEnabled(false);
+    variableMenu->setEnabled(false);
+  } else dsmMenu->setEnabled(false);
 
-  if (dynamic_cast<SiteItem*>(parentItem)) dsmMenu->setEnabled(true);
-  else dsmMenu->setEnabled(false);
+  if (dynamic_cast<DSMItem*>(parentItem)) {
+    sensorMenu->setEnabled(true);
+    if (dynamic_cast<DSC_A2DSensorItem*>(item)) { // ANALOG_DMMAT
+      a2dVariableMenu->setEnabled(true);
+      editA2DVariableAction->setEnabled(false);
+      deleteA2DVariableAction->setEnabled(false);
+    } else
+      a2dVariableMenu->setEnabled(false);
+    variableMenu->setEnabled(false);
+  } else sensorMenu->setEnabled(false);
 
-  if (dynamic_cast<A2DSensorItem*>(parentItem)) {
+  if (dynamic_cast<SensorItem*>(parentItem)) {
+    a2dVariableMenu->setEnabled(false);
+    variableMenu->setEnabled(true);
+  }
+
+  if (dynamic_cast<A2DSensorItem*>(parentItem)) { // ANALOG_NCAR
+    SensorItem* sensorItem = dynamic_cast<SensorItem*>(parentItem);
+    cerr << "A2D SensorItem: " << sensorItem->getBaseName().toStdString() << "\n";
+
     a2dVariableMenu->setEnabled(true);
+    editA2DVariableAction->setEnabled(true);
+    deleteA2DVariableAction->setEnabled(true);
+    variableMenu->setEnabled(false);
     tableview->setSortingEnabled(true);
     tableview->sortByColumn(0, Qt::AscendingOrder);
   }
-  else {
-    a2dVariableMenu->setEnabled(false);
-    tableview->setSortingEnabled(false);
-  }
 
-  if (dynamic_cast<SensorItem*>(parentItem) &&
-      !dynamic_cast<A2DSensorItem*>(parentItem))
-    variableMenu->setEnabled(true);
-  else variableMenu->setEnabled(false);
+  if (dynamic_cast<DSC_A2DSensorItem*>(parentItem)) { // ANALOG_DMMAT
+    SensorItem* sensorItem = dynamic_cast<SensorItem*>(parentItem);
+    cerr << "DSC SensorItem: " << sensorItem->getBaseName().toStdString() << "\n";
+
+    a2dVariableMenu->setEnabled(true);
+    editA2DVariableAction->setEnabled(true);
+    deleteA2DVariableAction->setEnabled(true);
+    variableMenu->setEnabled(false);
+    tableview->setSortingEnabled(true);
+    tableview->sortByColumn(0, Qt::AscendingOrder);
+  }
 
   // fiddle with context-dependent menus/toolbars
   /*

@@ -1,0 +1,17 @@
+# -*- python -*-
+
+import os
+
+test_sources = Split("""
+test_config_edit.cc
+""")
+
+def gtest(env):
+  env.Append(LIBS=['gtest'])
+
+env = Environment(tools=['default', gtest])
+
+tv = env.Program('configedit_tests', test_sources)
+
+env.Alias('ctest',
+          env.Test(tv, "cd ${SOURCE.dir} && ./${SOURCE.file} ${GTESTS}"))

@@ -24,78 +24,64 @@
  ********************************************************************
 */
 
-#ifndef _VARIABLE_ITEM_H
-#define _VARIABLE_ITEM_H
+#ifndef _DSC_A2DVARIABLE_ITEM_H
+#define _DSC_A2DVARIABLE_ITEM_H
 
 #include "NidasItem.h"
 #include <nidas/core/Variable.h>
-#include "SensorItem.h"
+#include <nidas/core/SampleTag.h>
+#include <iostream>
+#include <vector>
+#include <fstream>
 
 using namespace nidas::core;
 
 
-class VariableItem : public NidasItem
+class DSC_A2DVariableItem : public NidasItem
 {
 
 public:
-    VariableItem(Variable *variable, SampleTag *sampleTag, int row, NidasModel *theModel, NidasItem *parent = 0) ;
+    DSC_A2DVariableItem(Variable *variable, SampleTag *sampleTag, int row,
+                    NidasModel *theModel, NidasItem *parent = 0) ;
 
-    ~VariableItem();
+    ~DSC_A2DVariableItem();
 
     bool removeChild(NidasItem *item) { return false; } // XXX
 
-    std::string variableName() { return this->dataField(1).toStdString(); }
+    std::string variableName() { return this->dataField(0).toStdString(); }
+    std::string getVarNamePfx();
+    std::string getVarNameSfx();
 
-    const QVariant & childLabel(int column) const { 
-      return NidasItem::_Name_Label; 
-    }
+    const QVariant & childLabel(int column) const
+                      { return NidasItem::_Name_Label; }
     int childColumnCount() const {return 1;}
 
     QString dataField(int column);
 
     QString name();
-    QString getLongName() 
-            { return QString::fromStdString(_variable->getLongName()); }
-    std::string getBaseName();
-
-    Variable *getVariable() const { return _variable; }
-
-    //SampleTag *getSampleTag() { return _sampleTag; }
-    SampleTag *getSampleTag() { 
-      return const_cast<SampleTag*>(_variable->getSampleTag()); 
-    }
-    std::vector<std::string> getCalibrationInfo();
+    SampleTag *getSampleTag() const { return _sampleTag; }
     xercesc::DOMNode* getSampleDOMNode() {
         if (_sampleDOMNode)
           return _sampleDOMNode;
         else return _sampleDOMNode=findSampleDOMNode();
-        }
-    float getRate() { return _sampleTag->getRate(); }
-    unsigned int getSampleId() {
-      std::cerr<< "in VarItem getSampleID\n";return _sampleID;
     }
-
-    xercesc::DOMNode* getVariableDOMNode(QString name) {
-        // Looking for variable node in DOM with value "name"
-        return _variableDOMNode=findVariableDOMNode(name);
-    }
-
-    void clearVarItem();
 
     std::string sSampleId() { return this->dataField(1).toStdString(); }
 
+    int getA2DChannel() { return _variable->getA2dChannel(); }
+    int getGain();
+    int getBipolar();
+    QString getLongName()
+            { return QString::fromStdString(_variable->getLongName()); }
+    float getRate() { return _sampleTag->getRate(); }
+    std::vector<std::string> getCalibrationInfo();
+    const std::string & getUnits() {return _variable->getUnits();}
+
     void setDOMName(QString fromName, std::string toName);
-
-    void fromDOM();
-
-    SensorItem * getSensorItem() {return dynamic_cast<SensorItem*>(parent());}
-
-    QString getCalValues();
-    QString getCalSrc();
-    QString getCalDate();
 
 protected:
         // get/convert to the underlying model pointers
+    Variable *getVariable() const { return _variable; }
     xercesc::DOMNode *findSampleDOMNode();
     xercesc::DOMNode *findVariableDOMNode(QString name);
     Variable * _variable;
@@ -105,11 +91,6 @@ protected:
 private:
     xercesc::DOMNode * _sampleDOMNode;
     xercesc::DOMNode * _variableDOMNode;
-    unsigned int _sampleID;
-
-    VariableConverter * _varConverter;
-    CalFile * _calFile;
-    std::string _calFileName;
     bool _gotCalDate, _gotCalVals;
     std::string _calDate, _calVals;
 };

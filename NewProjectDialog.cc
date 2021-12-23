@@ -97,29 +97,10 @@ void NewProjectDialog::accept()
     }
 
     // Create and execute the init_project command
-    char cmd[1024];
-    strcpy(cmd, _defaultDir.toStdString().c_str());
-    strcat(cmd, "/scripts/init_project ");
-    strcat(cmd, ProjName->text().toStdString().c_str());
-    strcat(cmd, " ");
-    strcat(cmd, platform.c_str());
-    std::cerr << "Calling init_project with command: " << cmd << "\n";
-    if (system(cmd) <= 0) {
-      std::cerr << " ERROR!:  Call to init_project failed!\n";
-    }
+    if (!initProject(platform)) return;
 
-    // call vdb2xml
-    strcpy(cmd, "vardb/src/vdb2xml/vdb2xml ");
-    strcat(cmd, _defaultDir.toStdString().c_str());
-    strcat(cmd, "/");
-    strcat(cmd, ProjName->text().toStdString().c_str());
-    strcat(cmd, "/");
-    strcat(cmd, platform.c_str());
-    strcat(cmd, "/VarDB");
-    std::cerr << "Calling init_project with command: " << cmd << "\n";
-    if (system(cmd) <= 0) {
-      std::cerr << " ERROR!:  Call to vdb2xml failed!\n";
-    }
+    // Call vdb2xml
+    if (!convertVdb2xml(platform)) return;
 
     // get filename back to configwindow
     QString fileName;
@@ -139,12 +120,12 @@ void NewProjectDialog::accept()
   }  else {
     _errorMessage->setText("Unacceptable input in Project Name");
     _errorMessage->exec();
-    std::cerr << "Unaccptable input in Project Name\n";
+    std::cerr << "Unacceptable input in Project Name\n";
     return;
   }
 
-  //_errorMessage->setText("The project has been created.  Now open the project configuration file and change the project name to the name you selected");
-  //_errorMessage->exec();
+  _errorMessage->setText("The project has been created.  Make sure it gets added to github (git add /home/janine/dev/projects/FRED; git commit; git push).");
+  _errorMessage->exec();
 
   QDialog::accept();
 }
@@ -162,4 +143,60 @@ bool NewProjectDialog::setUpDialog()
   ProjName->clear();
 
   return true;
+}
+
+/*
+ * Create and execute the init_project command
+ * @return false if initialization failed
+ */
+bool NewProjectDialog::initProject(std::string platform)
+{
+    char cmd[1024];
+    strcpy(cmd, _defaultDir.toStdString().c_str());
+    strcat(cmd, "/scripts/init_project ");
+    strcat(cmd, ProjName->text().toStdString().c_str());
+    strcat(cmd, " ");
+    strcat(cmd, platform.c_str());
+    std::cerr << "Calling init_project with command: " << cmd << endl;
+    const char* status = std::to_string(system(cmd)).c_str();
+    if (strcmp(status, "0")) {
+      char msg[1024];
+      strcpy(msg,"ERROR!: Call to init_project failed with error: ");
+      strcat(msg,status);
+      strcat(msg," Terminal window may have clues.");
+
+      QMessageBox msgBox;
+      msgBox.setText(msg);
+      msgBox.exec();
+      return false;
+    }
+    return true;
+}
+
+/*
+ * Call vdbtxml to convert the VarDB file to xml
+ */
+bool NewProjectDialog::convertVdb2xml(std::string platform)
+{
+    char cmd[1024];
+    strcpy(cmd, "vardb/src/vdb2xml/vdb2xml ");
+    strcat(cmd, _defaultDir.toStdString().c_str());
+    strcat(cmd, "/");
+    strcat(cmd, ProjName->text().toStdString().c_str());
+    strcat(cmd, "/");
+    strcat(cmd, platform.c_str());
+    strcat(cmd, "/VarDB");
+    std::cout << "Calling vdb2xml with command: " << cmd << endl;
+    const char* status = std::to_string(system(cmd)).c_str();
+    if (strcmp(status, "0")) {
+      char msg[1024];
+      strcpy(msg,"ERROR!: Call to vdb2xml failed with error: ");
+      strcat(msg,status);
+      strcat(msg," Contact an SE for assistance.");
+      QMessageBox msgBox;
+      msgBox.setText(msg);
+      msgBox.exec();
+      return false;
+    }
+    return true;
 }
