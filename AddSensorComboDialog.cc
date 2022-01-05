@@ -206,11 +206,25 @@ void AddSensorComboDialog::accept()
   if (SensorBox->currentText() == QString("ANALOG_DMMAT") ){
         cerr<<"DMMAT adding correctly in AddSensor ComboDialog::accept"<<endl;
     }
+
   if (SensorBox->currentText() == QString("ANALOG_NCAR") &&
       A2DTempSuffixText->text().isEmpty())
   {
+    // Get the DSM name
+    DSMItem* dsmItem = dynamic_cast<DSMItem*>(_model->getCurrentRootItem());
+    if (!dsmItem)
+      throw InternalProcessingException("Current root index is not a DSM.");
+    DSMConfig* dsm = dsmItem->getDSMConfig();
+    std::string currDSMName = dsm->getName();
+    // Remove "dsm" from name, if extant
+    if (currDSMName.compare(0,3,"dsm") == 0)
+        currDSMName.erase(0,3);
+    // Add dsm identifier as suggested suffix
+    A2DTempSuffixText->insert(QString::fromStdString(currDSMName));
+    cout << "Adding variable to DSM " << currDSMName << "\n";
     _errorMessage->setText("A2D Temp Suffix must be set when Analog Sensor is"
-                           " selected - Please enter a suffix");
+                           " selected - Please enter a suffix. Defaulting to"
+                           " DSM identifier");
     _errorMessage->exec();
     return;
   }
@@ -370,7 +384,7 @@ void AddSensorComboDialog::setDevice(int channel)
    std::cerr << "New device channel selected " << channel << std::endl;
    DeviceValidator * devVal = DeviceValidator::getInstance();
    std::string stdSensor = sensor.toStdString();
-   cout << "setDevice stdSensor:" << stdSensor << endl;
+   cerr << "setDevice stdSensor:" << stdSensor << endl;
 
    std::string dev = devVal->getDevicePrefix(stdSensor);
    QString fullDevice = QString::fromStdString(dev) + QString::number(channel);
@@ -416,36 +430,42 @@ void AddSensorComboDialog::existingSensor(SensorItem* sensorItem)
   // Set up the Suffix box
   SuffixText->insert(QString::fromStdString(sensor->getSuffix()));
 
-  // Set up A2D Temp Suffix box and serial number/cal file box
-  if (baseName == "ANALOG_NCAR"||baseName == "ANALOG_DMMAT") {
-    A2DSensorItem* a2dSensorItem = dynamic_cast<A2DSensorItem*>(sensorItem);
-    if (baseName == "ANALOG_NCAR"){
-        A2DTempSuffixText->insert(a2dSensorItem->getA2DTempSuffix());
-        std::string a2dCalFn = a2dSensorItem->getCalFileName();
+  std::string a2dCalFn;
+  // Set up A2D Temp Suffix box (ANALOG_NCAR only)
+  if (baseName == "ANALOG_NCAR"){
+      A2DSensorItem* a2dSensorItem = dynamic_cast<A2DSensorItem*>(sensorItem);
+      A2DTempSuffixText->insert(a2dSensorItem->getA2DTempSuffix());
+      a2dCalFn = a2dSensorItem->getCalFileName();
+  }
+  if (baseName == "ANALOG_DMMAT"){
+      DSC_A2DSensorItem* dscA2dSensorItem = dynamic_cast<DSC_A2DSensorItem*>(sensorItem);
+      a2dCalFn = dscA2dSensorItem->getCalFileName();
+  }
 
-        if (a2dCalFn.empty()) {
-          cerr << "AddSensorComboDialog setting edit text to"
-               << baseName.toStdString() << "\n";
-          _errorMessage->setText(QString::fromStdString(
-                             "Warning - no current Serial Number for A2D card.\n")
-                         + QString::fromStdString(
-                             " Will default to first possible S/N.\n")
-                         + QString::fromStdString (
-                             "And it's associated calibration coeficients.\n"));
-          _errorMessage->exec();
-          A2DSNBox->setCurrentIndex(0);
-        } else {
-          int index = A2DSNBox->findText(QString::fromStdString(a2dCalFn));
-          if (index != -1) A2DSNBox->setCurrentIndex(index);
-          else {
-            _errorMessage->setText(QString::fromStdString(
-                               "Could not find A2D Serial number cal file: ")
-                           + QString::fromStdString(a2dCalFn)
-                           + QString::fromStdString (
-                             ".  Suggest you look in to that missing file."));
-            _errorMessage->exec();
-          }
-        }
+  // Vet contents of serial number/cal file box.
+  if (baseName == "ANALOG_NCAR"||baseName == "ANALOG_DMMAT") {
+    if (a2dCalFn.empty()) {
+      cerr << "AddSensorComboDialog setting edit text to"
+           << baseName.toStdString() << "\n";
+      _errorMessage->setText(QString::fromStdString(
+                         "Warning - no current Serial Number for A2D card.\n")
+                     + QString::fromStdString(
+                         " Will default to first possible S/N.\n")
+                     + QString::fromStdString (
+                         "And it's associated calibration coeficients.\n"));
+      _errorMessage->exec();
+      A2DSNBox->setCurrentIndex(0);
+    } else {
+      int index = A2DSNBox->findText(QString::fromStdString(a2dCalFn));
+      if (index != -1) A2DSNBox->setCurrentIndex(index);
+      else {
+        _errorMessage->setText(QString::fromStdString(
+                           "Could not find A2D Serial number cal file: ")
+                       + QString::fromStdString(a2dCalFn)
+                       + QString::fromStdString (
+                         ".  Suggest you look in to that missing file."));
+        _errorMessage->exec();
+      }
     }
   }
 

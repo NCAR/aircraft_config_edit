@@ -25,8 +25,8 @@
 */
 
 #include "DSMItem.h"
-#include "A2DSensorItem.h"
-#include "A2DVariableItem.h"
+#include "DSC_A2DSensorItem.h"
+#include "DSC_A2DVariableItem.h"
 
 #include <iostream>
 #include <fstream>
@@ -36,11 +36,11 @@
 using namespace xercesc;
 using namespace std;
 
-A2DSensorItem::A2DSensorItem(DSMAnalogSensor *sensor, int row, 
+DSC_A2DSensorItem::DSC_A2DSensorItem(DSC_A2DSensor *sensor, int row, 
                   NidasModel *theModel, NidasItem *parent) :
       SensorItem(sensor, row, theModel, parent) {}
 
-NidasItem * A2DSensorItem::child(int i)
+NidasItem * DSC_A2DSensorItem::child(int i)
 {
     if ((i>=0) && (i<childItems.size()))
         return childItems[i];
@@ -48,24 +48,25 @@ NidasItem * A2DSensorItem::child(int i)
     // Because children are A2D variables, and adding of new variables
     // could be anywhere in the list of variables (and sample ids) , it is 
     // necessary to recreate the list for new child items.
-cerr<<"A2DSensorItem::Child  _sensor is:also not here" << "\n";
+cerr<<"DSC_A2DSensorItem::Child  _sensor is:also not here" << "\n";
     while (!childItems.empty()) childItems.pop_front();
     int j;
     SampleTagIterator it;
-    DSMAnalogSensor * a2dsensor = dynamic_cast<DSMAnalogSensor*>(_sensor);
+    cout << "In DSC_A2DSensorItem name of sensor is: " << _sensor->getName() << "\n";
+    DSC_A2DSensor * a2dsensor = dynamic_cast<DSC_A2DSensor*>(_sensor);
     for (j=0, it = a2dsensor->getSampleTagIterator(); it.hasNext();) {
-cerr<<"A2DSensorItem::Child  _sensor is:trying" <<_sensor<<" also j="<<j<< "\n";
+cout<<"DSC_A2DSensorItem::Child  _sensor is:trying" <<_sensor<<" also j="<<j<< "\n";
         SampleTag* sample = (SampleTag*)it.next(); // XXX cast from const
         for (VariableIterator vt = sample->getVariableIterator(); 
              vt.hasNext(); j++) {
           Variable* variable = (Variable*)vt.next(); // XXX cast from const
-          NidasItem *childItem = new A2DVariableItem(variable, sample, j, 
+          NidasItem *childItem = new DSC_A2DVariableItem(variable, sample, j, 
                                                      model, this);
           childItems.append( childItem);
         }
     }
 
-cerr<<"A2DSensorItem::Child after loop  _sensor is:trying" <<_sensor<< "\n";
+cout<<"DSC_A2DSensorItem::Child after loop  _sensor is:trying" <<_sensor<< "\n";
     // we tried to build children but still can't find requested row i
     // probably (always?) when i==0 and this item has no children
     if ((i<0) || (i>=childItems.size())) return 0;
@@ -74,80 +75,39 @@ cerr<<"A2DSensorItem::Child after loop  _sensor is:trying" <<_sensor<< "\n";
     return childItems[i];
 }
 
-void A2DSensorItem::refreshChildItems()
+void DSC_A2DSensorItem::refreshChildItems()
 {
   while (!childItems.empty()) childItems.pop_front();
   int j;
   SampleTagIterator it;
 cerr<<"refreshChildItems _sensor is:" << _sensor << "\n";
-  DSMAnalogSensor * a2dsensor = dynamic_cast<DSMAnalogSensor*>(_sensor);
+  DSC_A2DSensor * a2dsensor = dynamic_cast<DSC_A2DSensor*>(_sensor);
 cerr<<"refreshChildItems now _sensor is:" << _sensor << "\n";
   for (j=0, it = a2dsensor->getSampleTagIterator(); it.hasNext();) {
     SampleTag* sample = (SampleTag*)it.next(); // XXX cast from const
     for (VariableIterator vt = sample->getVariableIterator();
          vt.hasNext(); j++) {
       Variable* variable = (Variable*)vt.next(); // XXX cast from const
-      NidasItem *childItem = new A2DVariableItem(variable, sample, j,
+      NidasItem *childItem = new DSC_A2DVariableItem(variable, sample, j,
                                                  model, this);
       childItems.append( childItem);
     }
   }
 }
 
-QString A2DSensorItem::getA2DTempSuffix()
-{
-cerr<<"geta2dTempSuffix _sensor is:" << _sensor << "\n";
-  DSMAnalogSensor * a2dsensor = dynamic_cast<DSMAnalogSensor*>(_sensor);
-cerr<<"get a2dTempSuffix now _sensor is:" << _sensor << "\n";
-  SampleTagIterator it;
-  for (it = a2dsensor->getSampleTagIterator(); it.hasNext();) {
-    SampleTag* sample = (SampleTag*)it.next(); // XXX cast from const
-    for (VariableIterator vt = sample->getVariableIterator();
-             vt.hasNext();) {
-      Variable* variable = (Variable*)vt.next(); // XXX cast from const
-      std::string varName = variable->getName();
-      if (!strncmp(varName.c_str(), "A2DTEMP_", 8)) {
-        QString qStr = QString::fromStdString(varName);
-        std::cerr << "in A2DSensorItem::getA2DTempSuffix() returning suffix: " << qStr.right(qStr.size()-7).toStdString() << "\n";
-        return qStr.right(qStr.size()-7);  // Keep the _ in the suffix name
-      }
-    }
-  }
-  return QString();
-}
-
-void A2DSensorItem::setNidasA2DTempSuffix(std::string a2dTempSfx)
-{
-cerr<<"setNidasa2dTempSuffix _sensor is:" << _sensor << "\n";
-  DSMAnalogSensor * a2dsensor = dynamic_cast<DSMAnalogSensor*>(_sensor);
-cerr<<"setNidasa2dTempSuffix now _sensor is:" << _sensor << "\n";
-  SampleTagIterator it;
-  for (it = a2dsensor->getSampleTagIterator(); it.hasNext();) {
-    SampleTag* sample = (SampleTag*)it.next(); // XXX cast from const
-    for (VariableIterator vt = sample->getVariableIterator();
-             vt.hasNext();) {
-      Variable* variable = (Variable*)vt.next(); // XXX cast from const
-      std::string varName = variable->getName();
-      if (!strncmp(varName.c_str(), "A2DTEMP_", 8)) {
-        variable->setName("A2DTEMP_" + a2dTempSfx);
-      }
-    }
-  }
-}
-
-std::string A2DSensorItem::getCalFileName() 
+std::string DSC_A2DSensorItem::getCalFileName() 
 {
 cerr<<"Before doing anything with _sensor" << "\n";
 //cerr<<"AddSensorItem a2dsensorItem:"  << a2dSensorItem<<"\n";
   const map<string,CalFile*>& cfs = _sensor->getCalFiles();
-cerr<<"sensor->getCalFiles works" << "\n";
+cerr<<"senspr->getCalFiles works" << "\n";
 
   if (!cfs.empty()) return cfs.begin()->second->getFile();
 
   return "";
 }
 
-std::string A2DSensorItem::getSerialNumberString() 
+std::string DSC_A2DSensorItem::getSerialNumberString() 
 {
 cerr<<"Swerial Num String Before doing anything with _sensor" << _sensor<<"\n";
   const map<string,CalFile*>& cfs = _sensor->getCalFiles();
@@ -158,6 +118,7 @@ cerr<<"Serial Num Strirng  _sensor" << _sensor<<"\n";
       return cfName.substr(0,cfName.find(".dat"));
   }
 
+cerr<<"Swerial Num String before return _sensor" << _sensor<<"\n";
   return "";
 }
 
@@ -167,17 +128,17 @@ cerr<<"Serial Num Strirng  _sensor" << _sensor<<"\n";
  * Assumes that the DOM already has a calibration file for the A2D Sensor.
  *
  */
-void A2DSensorItem::updateDOMCalFile(const std::string & calFileName)
+void DSC_A2DSensorItem::updateDOMCalFile(const std::string & calFileName)
 {
-std::cerr<< "in A2DSensorItem::updateDOMCalFile(" << calFileName << ")\n";
+std::cerr<< "in DSC_A2DSensorItem::updateDOMCalFile(" << calFileName << ")\n";
   if (this->getDOMNode()->getNodeType() != xercesc::DOMNode::ELEMENT_NODE)
-    throw InternalProcessingException("A2DSensorItem::updateDOMCalFile - node is not an Element node.");
+    throw InternalProcessingException("DSC_A2DSensorItem::updateDOMCalFile - node is not an Element node.");
 
   // Look through child nodes for calfile then replace the name.
   DOMNodeList * sensorChildNodes = this->getDOMNode()->getChildNodes();
   if (sensorChildNodes == 0) {
     std::cerr<< "  getChildNodes returns 0\n";
-    throw InternalProcessingException("A2DSensorItem::updateDOMCalFile - getChildNodes return is 0!");
+    throw InternalProcessingException("DSC_A2DSensorItem::updateDOMCalFile - getChildNodes return is 0!");
   }
 
   DOMNode * calFileNode = 0;
@@ -190,7 +151,7 @@ std::cerr<< "in A2DSensorItem::updateDOMCalFile(" << calFileName << ")\n";
   }
 
   if (calFileNode->getNodeType() != xercesc::DOMNode::ELEMENT_NODE)
-    throw InternalProcessingException("A2DSensorItem::updateDOMCalFile - node is not an Element node.");
+    throw InternalProcessingException("DSC_A2DSensorItem::updateDOMCalFile - node is not an Element node.");
 
   xercesc::DOMElement * calFileElmt = (xercesc::DOMElement*)calFileNode;
   if (calFileElmt->hasAttribute((const XMLCh*)XMLStringConverter("file")))
@@ -208,27 +169,6 @@ std::cerr<< "in A2DSensorItem::updateDOMCalFile(" << calFileName << ")\n";
   return;
 }
 
-void A2DSensorItem::updateDOMA2DTempSfx(QString oldSfx, std::string newSfx)
-{
-  // Find the A2DTemperature variable in childItems list
-  NidasItem *var;
-  A2DVariableItem *a2dVar;
-  QList<NidasItem*>::iterator i;
-  for (i = childItems.begin(); i!=childItems.end(); ++i) {
-    var = *i;
-    a2dVar = dynamic_cast<A2DVariableItem*>(var);
-    if (!a2dVar) 
-      throw InternalProcessingException("SensorItem::child not an A2DVariableItem");
-    if (a2dVar->name().contains("A2DTEMP")) {
-      QString qStr("A2DTEMP");
-      qStr.append(oldSfx);
-      std::string str("A2DTEMP");
-      str.append(newSfx);
-      a2dVar->setDOMName(qStr,str);
-    }
-  }
-}
-
 /*!
  * \brief remove the sample \a item from this Sensor's Nidas and DOM trees
  *
@@ -236,12 +176,12 @@ void A2DSensorItem::updateDOMA2DTempSfx(QString oldSfx, std::string newSfx)
  * due to refactoring from Document
  *
  */
-bool A2DSensorItem::removeChild(NidasItem *item)
+bool DSC_A2DSensorItem::removeChild(NidasItem *item)
 {
 
-cerr << "A2DSensorItem::removeChild\n";
+cerr << "DSC_A2DSensorItem::removeChild\n";
 
-  A2DVariableItem *a2dVariableItem = dynamic_cast<A2DVariableItem*>(item);
+  DSC_A2DVariableItem *a2dVariableItem = dynamic_cast<DSC_A2DVariableItem*>(item);
   string deleteVariableName = a2dVariableItem->name().toStdString();
 
 cerr << "  Remove Variable:" << deleteVariableName << "from all 3 models\n";

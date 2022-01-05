@@ -41,7 +41,7 @@
 using namespace config;
 
 QRegExp _calibRegEx("^-?\\d*.?\\d*");
-QRegExp _varnameRegEx("^[A-Z|0-9|_]*$");
+QRegExp _varnameRegEx("^[A-Za-z|0-9|_]*$");
 QRegExp _varunitRegEx("^\\S*$");
 
 VariableComboDialog::VariableComboDialog(QWidget *parent):
@@ -247,6 +247,7 @@ void VariableComboDialog::show(NidasModel* model,
     throw InternalProcessingException("Selection is not a Variable.");
 
   VariableText->insert(QString::fromStdString(_varItem->getBaseName()));
+  VariableText->setEnabled(false);
   LongNameText->insert(_varItem->getLongName());
 
   float rate = _varItem->getRate();

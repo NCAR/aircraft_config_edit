@@ -54,7 +54,9 @@
 #include "nidas_qmv/SensorItem.h"
 #include "nidas_qmv/ProjectItem.h"
 #include "nidas_qmv/A2DVariableItem.h"
+#include "nidas_qmv/DSC_A2DVariableItem.h"
 #include "nidas_qmv/A2DSensorItem.h"
+#include "nidas_qmv/DSC_A2DSensorItem.h"
 #include "nidas_qmv/PMSSensorItem.h"
 #include "nidas_qmv/VariableItem.h"
 
@@ -130,7 +132,8 @@ public:
                     const std::string & a2dSNFname);
     void addA2DCalFile(xercesc::DOMElement *sensorElem,
                     xercesc::DOMNode *dsmNode,
-                    const std::string & a2dSNFname);
+                    const std::string & a2dSNFname,
+                    const std::string & sensorIdName);
     void addSampAndVar(xercesc::DOMElement *sensorElem, 
                        xercesc::DOMNode *dsmNode, 
                        const std::string & a2dTempSfx);
@@ -178,10 +181,39 @@ public:
                         const std::string & a2dVarUnits, 
                         vector <std::string> cals);
 
+    void addNCARVariable(const std::string & a2dVarNamePfx,
+                        const std::string & a2dVarNameSfx,
+                        const std::string & a2dVarLongName,
+                        const std::string & a2dVarVolts,
+                        const std::string & a2dVarChannel,
+                        const std::string & a2dSR,
+                        const std::string & a2dVarUnits,
+                        vector <std::string> cals);
+
+    void addDSCVariable(const std::string & a2dVarNamePfx,
+                        const std::string & a2dVarNameSfx,
+                        const std::string & a2dVarLongName,
+                        const std::string & a2dVarVolts,
+                        const std::string & a2dVarChannel,
+                        const std::string & a2dSR,
+                        const std::string & a2dVarUnits,
+                        vector <std::string> cals);
+
     void insertA2DVariable(NidasModel            *model,
-                           A2DSensorItem         *sensorItem,
+                           SensorItem            *sensorItem,
                            DOMNode               *sensorNode,
-                           DSMAnalogSensor       *analogSensor,
+                           const std::string     &a2dVarNamePfx,
+                           const std::string     &a2dVarNameSfx,
+                           const std::string     &a2dVarLongName,
+                           const std::string     &a2dVarVolts,
+                           const std::string     &a2dVarChannel,
+                           const std::string     &a2dVarSR,
+                           const std::string     &a2dVarUnits,
+                           vector <std::string>  cals);
+
+    void insertDSC_A2DVariable(NidasModel            *model,
+                           SensorItem            *sensorItem,
+                           DOMNode               *sensorNode,
                            const std::string     &a2dVarNamePfx,
                            const std::string     &a2dVarNameSfx,
                            const std::string     &a2dVarLongName,
@@ -248,6 +280,17 @@ private:
 
 // If we had a vector of A2DVariable structures:
     struct A2DVariableInfo {
+        std::string a2dVarNamePfx;
+        std::string a2dVarNameSfx;
+        std::string a2dVarLongName;
+        std::string a2dVarVolts;
+        std::string a2dVarChannel;
+        std::string a2dVarSR;
+        std::string a2dVarUnits;
+        vector <std::string> cals;
+    };
+
+    struct DSC_A2DVariableInfo {
         std::string a2dVarNamePfx;
         std::string a2dVarNameSfx;
         std::string a2dVarLongName;

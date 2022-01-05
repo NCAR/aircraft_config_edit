@@ -399,7 +399,12 @@ void VariableItem::fromDOM()
   //this->getVariableDOMNode(this->name());
   if (!_variableDOMNode) {
     std::cerr<<"VariableItem::fromDOM getting new node\n";
-    this->getVariableDOMNode(this->name());
+    this->getVariableDOMNode(QString::fromStdString(this->getBaseName()));
+  }
+  if (!_variableDOMNode) {
+      // gracefully catch if didn't find a matching variable
+      throw InternalProcessingException(
+              "VariableItem::fromDOM - could not find variable in XML matching name " + this->name().toStdString());
   }
   if (_variableDOMNode->getNodeType() != xercesc::DOMNode::ELEMENT_NODE)
     throw InternalProcessingException(
