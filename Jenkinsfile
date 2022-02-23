@@ -13,7 +13,7 @@ pipeline {
         git 'eolJenkins:ncar/aircraft_config_edit'
       }
     }
-    stage('Build) {
+    stage('Build') {
       steps {
         sh 'scons'
       }
