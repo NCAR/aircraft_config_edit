@@ -8,11 +8,6 @@ pipeline {
   pollSCM('H/30 8-18 * * * ')
   }
   stages {
-    stage('Checkout Scm') {
-      steps {
-        git 'eolJenkins:ncar/aircraft_config_edit'
-      }
-    }
     stage('Build') {
       steps {
         sh 'git submodule update --init --recursive'
