@@ -16,8 +16,8 @@ pipeline {
     }
   }
   post {
-    success {
-      mail(to: 'cjw@ucar.edu cdewerd@ucar.edu janine@ucar.edu, taylort@ucar.edu', subject: 'aircraft_config_edit Jenkins build successful', body: 'aircraft_config_edit Jenkins build successful')
+    failure {
+      mail(to: 'cjw@ucar.edu cdewerd@ucar.edu janine@ucar.edu, taylort@ucar.edu', subject: 'aircraft_config_edit Jenkins build failed', body: 'aircraft_config_edit Jenkins build failed')
     }
   }
   options {
