@@ -17,7 +17,10 @@ pipeline {
   }
   post {
     failure {
-      mail(to: 'cjw@ucar.edu cdewerd@ucar.edu janine@ucar.edu, taylort@ucar.edu', subject: 'aircraft_config_edit Jenkins build failed', body: 'aircraft_config_edit Jenkins build failed')
+      emailext to: "cjw@ucar.edu janine@ucar.edu cdewerd@ucar.edu taylort@ucar.edu",
+      subject: "Jenkinsfile aircraft_config_edit build failed",
+      body: "See console output attached",
+      attachLog: true
     }
   }
   options {
