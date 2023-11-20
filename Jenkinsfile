@@ -1,7 +1,7 @@
 pipeline {
   agent {
      node {
-        label 'RHEL7_x86_64'
+        label 'CentOS9_x86_64'
         }
   }
   triggers {
@@ -17,7 +17,7 @@ pipeline {
   }
   post {
     failure {
-      emailext to: "cjw@ucar.edu janine@ucar.edu cdewerd@ucar.edu taylort@ucar.edu",
+      emailext to: "cjw@ucar.edu janine@ucar.edu cdewerd@ucar.edu",
       subject: "Jenkinsfile aircraft_config_edit build failed",
       body: "See console output attached",
       attachLog: true
