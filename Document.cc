@@ -2597,28 +2597,28 @@ cerr<<"a2dVarVolts = " << a2dVarVolts <<"\n";
                            (const XMLCh*)XMLStringConverter("4"));
     biPolarParmElem->setAttribute((const XMLCh*)XMLStringConverter("value"),
                            (const XMLCh*)XMLStringConverter("false"));
-    analogSensor->setA2DParameters(atoi(a2dVarChannel.c_str()), 4, 0);
+    analogSensor->setGainBipolar(atoi(a2dVarChannel.c_str()), 4, 0);
   } else
   if (a2dVarVolts == " -5 to  5 Volts") {
       gainParmElem->setAttribute((const XMLCh*)XMLStringConverter("value"),
                            (const XMLCh*)XMLStringConverter("2"));
       biPolarParmElem->setAttribute((const XMLCh*)XMLStringConverter("value"),
                            (const XMLCh*)XMLStringConverter("true"));
-    analogSensor->setA2DParameters(atoi(a2dVarChannel.c_str()), 2, 1);
+    analogSensor->setGainBipolar(atoi(a2dVarChannel.c_str()), 2, 1);
   } else
   if (a2dVarVolts == "  0 to 10 Volts") {
     gainParmElem->setAttribute((const XMLCh*)XMLStringConverter("value"),
                            (const XMLCh*)XMLStringConverter("2"));
     biPolarParmElem->setAttribute((const XMLCh*)XMLStringConverter("value"),
                            (const XMLCh*)XMLStringConverter("false"));
-    analogSensor->setA2DParameters(atoi(a2dVarChannel.c_str()), 2, 0);
+    analogSensor->setGainBipolar(atoi(a2dVarChannel.c_str()), 2, 0);
   } else
   if (a2dVarVolts == "-10 to 10 Volts") {
     gainParmElem->setAttribute((const XMLCh*)XMLStringConverter("value"),
                            (const XMLCh*)XMLStringConverter("1"));
     biPolarParmElem->setAttribute((const XMLCh*)XMLStringConverter("value"),
                            (const XMLCh*)XMLStringConverter("true"));
-    analogSensor->setA2DParameters(atoi(a2dVarChannel.c_str()), 1, 1);
+    analogSensor->setGainBipolar(atoi(a2dVarChannel.c_str()), 1, 1);
   } else {
      if (createdNewSamp)  {
          // keep nidas Project tree in sync with DOM
@@ -2992,28 +2992,28 @@ cerr<<"a2dVarVolts = " << a2dVarVolts <<"\n";
                            (const XMLCh*)XMLStringConverter("4"));
     biPolarParmElem->setAttribute((const XMLCh*)XMLStringConverter("value"),
                            (const XMLCh*)XMLStringConverter("false"));
-    analogSensor->setA2DParameters(atoi(a2dVarChannel.c_str()), 4, 0);
+    analogSensor->setGainBipolar(atoi(a2dVarChannel.c_str()), 4, 0);
   } else
   if (a2dVarVolts == " -5 to  5 Volts") {
       gainParmElem->setAttribute((const XMLCh*)XMLStringConverter("value"),
                            (const XMLCh*)XMLStringConverter("2"));
       biPolarParmElem->setAttribute((const XMLCh*)XMLStringConverter("value"),
                            (const XMLCh*)XMLStringConverter("true"));
-    analogSensor->setA2DParameters(atoi(a2dVarChannel.c_str()), 2, 1);
+    analogSensor->setGainBipolar(atoi(a2dVarChannel.c_str()), 2, 1);
   } else
   if (a2dVarVolts == "  0 to 10 Volts") {
     gainParmElem->setAttribute((const XMLCh*)XMLStringConverter("value"),
                            (const XMLCh*)XMLStringConverter("2"));
     biPolarParmElem->setAttribute((const XMLCh*)XMLStringConverter("value"),
                            (const XMLCh*)XMLStringConverter("false"));
-    analogSensor->setA2DParameters(atoi(a2dVarChannel.c_str()), 2, 0);
+    analogSensor->setGainBipolar(atoi(a2dVarChannel.c_str()), 2, 0);
   } else
   if (a2dVarVolts == "-10 to 10 Volts") {
     gainParmElem->setAttribute((const XMLCh*)XMLStringConverter("value"),
                            (const XMLCh*)XMLStringConverter("1"));
     biPolarParmElem->setAttribute((const XMLCh*)XMLStringConverter("value"),
                            (const XMLCh*)XMLStringConverter("true"));
-    analogSensor->setA2DParameters(atoi(a2dVarChannel.c_str()), 1, 1);
+    analogSensor->setGainBipolar(atoi(a2dVarChannel.c_str()), 1, 1);
   } else {
      if (createdNewSamp)  {
          // keep nidas Project tree in sync with DOM
