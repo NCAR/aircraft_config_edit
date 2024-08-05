@@ -1995,10 +1995,8 @@ cerr<<"  sfx:"<<a2dvItem->getVarNameSfx()<<"\n";
         throw InternalProcessingException
                       ("Unsupported Gain and Bipolar Values");
       }
-      a2dvInfo->a2dVarChannel = static_cast<ostringstream*>(&(ostringstream()
-                                    << a2dvItem->getA2DChannel()) )->str();
-      a2dvInfo->a2dVarSR = static_cast<ostringstream*>( &(ostringstream() <<
-                                    (int) a2dvItem->getRate()) )->str();
+      a2dvInfo->a2dVarChannel = std::to_string(a2dvItem->getA2DChannel());
+      a2dvInfo->a2dVarSR = std::to_string((int) a2dvItem->getRate());
       a2dvInfo->a2dVarUnits = a2dvItem->getUnits();
       a2dvInfo->cals = a2dvItem->getCalibrationInfo();
 
@@ -2215,10 +2213,8 @@ cerr<<"  sfx:"<<a2dvItem->getVarNameSfx()<<"\n";
         throw InternalProcessingException
                       ("Unsupported Gain and Bipolar Values");
       }
-      a2dvInfo->a2dVarChannel = static_cast<ostringstream*>(&(ostringstream()
-                                    << a2dvItem->getA2DChannel()) )->str();
-      a2dvInfo->a2dVarSR = static_cast<ostringstream*>( &(ostringstream() <<
-                                    (int) a2dvItem->getRate()) )->str();
+      a2dvInfo->a2dVarChannel = std::to_string(a2dvItem->getA2DChannel());
+      a2dvInfo->a2dVarSR = std::to_string((int) a2dvItem->getRate());
       a2dvInfo->a2dVarUnits = a2dvItem->getUnits();
       a2dvInfo->cals = a2dvItem->getCalibrationInfo();
 
