@@ -1,3 +1,6 @@
+# As of 2022, RAF has chosen not to maintain this tool.  New analog cards mean configedit would require significant refactoring to be fully functional. Going forward, the nidas config file is hand edited by the RAF SEs.
+
+
 # configedit
 
 The configuration editor, 'configedit', is a Qt based application that allows visualization of a nidas/nimbus configuration (e.g. default.xml) file.
