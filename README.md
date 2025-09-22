@@ -1,5 +1,9 @@
-# As of 2022, RAF has chosen not to maintain this tool.  New analog cards mean configedit would require significant refactoring to be fully functional. Going forward, the nidas config file is hand edited by the RAF SEs.
-
+> [!WARNING]
+> ## As of 2022, RAF has chosen not to maintain this tool.
+> * New analog cards mean configedit would require significant refactoring to be fully functional. Going forward, the nidas config file is hand edited by the RAF SEs.
+> * Unimplemented issues have been marked "Closed as not planned" and closed. Should development continue at a future date, these unimplemented
+issues can be found by looking for the grey circle icon with a slash or by going to the issues queue and filtering on
+"is:issue state:closed reason:not-planned"
 
 # configedit
 
