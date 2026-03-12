@@ -28,6 +28,8 @@
 
 #include <exceptions/InternalProcessingException.h>
 
+#include <nidas/util/ParseException.h>
+
 #include <iostream>
 
 using namespace xercesc;

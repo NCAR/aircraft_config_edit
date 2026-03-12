@@ -29,6 +29,8 @@
 
 #include <exceptions/InternalProcessingException.h>
 
+#include <nidas/util/ParseException.h>
+
 #include <QMessageBox>
 
 using namespace xercesc;
